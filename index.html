@@ -1,0 +1,69 @@
+---
+title: Badhri Nadh
+layout: default
+root: true
+---
+
+<!-- PLACEHOLDER COPY — replace all three paragraphs below with your own. -->
+<p>
+  A software engineer. Builds small tools and modest websites.
+</p>
+<p>
+  Lives in India. <span class="time" data-timestamp-text="It is currently {time} where I am."></span>
+</p>
+
+<p>
+  As recent as {{ site.recent_date | date: "%b %e, %Y" }}, writing code, making things, and keeping this page up to date.
+</p>
+
+<nav aria-label="Profession">
+  <a href="{% link _pages/now.md %}">Now</a><hr class="inline-hr">
+  <a href="https://badhrinadh.com/">Portfolio</a>
+</nav>
+
+<br>
+
+<nav aria-label="Additional content">
+  <a href="/colophon">Colophon</a><hr class="inline-hr">
+  <a href="{% link _pages/uses.md %}">Uses</a>
+</nav>
+<nav aria-label="Social">
+  <a href="https://github.com/BadhriNadhBade" rel="me">GitHub</a>
+</nav>
+
+<hr class="hr">
+
+<h2 class="normal-heading">Photos</h2><a href="/photos" class="styled-link">All photos</a> <a href="/photos.xml" class="styled-link">RSS</a>
+<div class="photos">
+{% assign photos = site.data.photos | reverse | slice: 0, 10 %}
+{% for photo in photos %}
+  <a href="/photos#P{{ photo.id }}" class="image-link">
+    <img src="{{ photo.thumbnail }}" height="200" alt="{{ photo.meta.alt }}" loading="lazy" style="aspect-ratio: {{ photo.meta.ratio }};">
+  </a>
+{% endfor %}
+</div>
+
+<hr class="hr">
+
+{% assign note = site.notes | last %}
+<h2 class="normal-heading">Notes</h2><a href="/notes" class="styled-link">Recent notes</a> <a href="/notes.xml" class="styled-link">RSS</a>
+{% if note %}
+<div class="note">
+  <time class="general-actions monospace">
+    {{ note.date | date: "%b %e, %Y" }}
+  </time>
+  <div class="note-content" lang="{{ note.lang | default: 'en-US' }}">{{ note.content | markdownify }}</div>
+  <div class="note-tags">{% for tag in note.tags %}<span class="note-tag" data-tag="{{ tag }}">{{ tag }}</span>{% endfor %}</div>
+</div>
+{% endif %}
+
+<hr class="hr">
+
+<h2 class="normal-heading">Recent posts</h2><a href="/feed.xml" class="styled-link">RSS</a>
+<ul aria-label="posts" class="terminal">
+{% assign posts = site.posts | where: "feature", 1 %}
+{% for post in posts %}
+  <li class="line"><a href="{{ post.url }}">{{ post.title }}</a><br>
+    <time class="monospace" datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: "%b %e, %Y" }}</time></li>
+{% endfor %}
+</ul>

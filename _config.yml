@@ -1,0 +1,35 @@
+title:            Badhri Nadh
+description:      Badhri Nadh's home page on the World Wide Web.
+url:              https://badhrinadh.com
+permalink:        /posts/:title
+timezone:         America/Chicago
+sass:
+  sass_dir: assets
+  style: :compressed
+collections:
+  notes:
+    output: true
+  pages:
+    output: true
+i18n:
+  en-US:
+    accessibility: Accessibility statement
+    source: View source
+    colophon: Colophon
+    now: Now
+# OpenHeart endpoint for the like button. Until you point this at your own
+# instance (https://github.com/dddddddddzzzz/OpenHeart), the button renders
+# but records nothing.
+open_heart_endpoint: ""
+
+markdown: CommonMarkGhPages
+commonmark:
+  options: ["UNSAFE", "HARDBREAKS"]
+  extensions: ["strikethrough", "autolink", "table"]
+recent_date: "2026/07/18"
+exclude:
+  - README.md
+  - start
+  - Gemfile
+  - Gemfile.lock
+  - vendor

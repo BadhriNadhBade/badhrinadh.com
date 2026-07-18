@@ -1,0 +1,29 @@
+name: "Fetch and save robots.txt"
+
+# Pulls the community AI-crawler blocklist weekly so robots.txt stays current
+# without manual upkeep. Source: https://github.com/ai-robots-txt/ai.robots.txt
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 16 * * 1' # Mondays
+
+permissions:
+  contents: write
+
+jobs:
+  process:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Update robots.txt
+        run: |
+          curl -fsSL https://raw.githubusercontent.com/ai-robots-txt/ai.robots.txt/refs/heads/main/robots.txt > robots.txt
+          git config user.email "bot@badhrinadh.com"
+          git config user.name "guardian [bot]"
+          git add robots.txt
+          git commit -m "Update robots.txt" || echo "Nothing changed"
+          git fetch origin main
+          git push origin HEAD:main

@@ -1,0 +1,64 @@
+name: "Add a note"
+
+# Triggered from an Apple Shortcut (or any client) that POSTs a
+# workflow_dispatch to the GitHub API. Writes the note, commits, and the
+# push re-triggers the Pages build.
+
+on:
+  workflow_dispatch:
+    inputs:
+      content:
+        description: "Note body (Markdown)"
+        type: string
+        required: true
+      tags:
+        description: "Tags (comma separated)"
+        type: string
+        required: false
+      lang:
+        description: "Language, e.g. en-US"
+        type: string
+        required: false
+      location:
+        description: "City"
+        type: string
+        required: false
+      datetime:
+        description: "Datetime, e.g. 2026-07-18 09:00"
+        type: string
+        required: true
+
+concurrency: ci-${{ github.workflow }}
+
+permissions:
+  contents: write
+
+jobs:
+  process:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Write note
+        env:
+          NOTE_DATETIME: ${{ inputs.datetime }}
+          NOTE_TAGS: ${{ inputs.tags }}
+          NOTE_LANG: ${{ inputs.lang }}
+          NOTE_LOCATION: ${{ inputs.location }}
+          NOTE_CONTENT: ${{ inputs.content }}
+        run: node .github/scripts/notes.js
+
+      - name: Push changes
+        run: |
+          git config user.email 'bot@badhrinadh.com'
+          git config user.name 'badhrinadh [bot]'
+          git add _notes
+          git commit -m "Add note" || echo "Nothing to commit"
+          git fetch origin main
+          git push origin HEAD:main

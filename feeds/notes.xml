@@ -1,0 +1,32 @@
+---
+permalink: /notes.xml
+---
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>{{ site.title }}'s notes</title>
+    <description>Micro posts.</description>
+    {% assign notes = site.notes | reverse %}
+    <lastBuildDate>{{ notes.first.date | date_to_rfc822 }}</lastBuildDate>
+    <link>{{ site.url }}</link>
+    <atom:link href="{{ site.url }}/notes.xml" rel="self" type="application/rss+xml" />
+    {% comment %}
+      Notes are held back from the feed for 24 hours, matching muan.co.
+      It's a deliberate cooling-off buffer: time to edit or delete before
+      a note reaches subscribers.
+    {% endcomment %}
+    {% assign one_day_ago = site.time | date: "%s" | minus: 86400 %}
+    {% for note in notes limit: 20 %}
+      {% assign note_time = note.date | date: "%s" | plus: 0 %}
+      {% if note_time > one_day_ago %}{% continue %}{% endif %}
+      <item>
+        <title>{{ note.date | date: "%Y-%m-%d" }}</title>
+        <description>{{ note.content | markdownify | xml_escape }}</description>
+        <pubDate>{{ note.date | date_to_rfc822 }}</pubDate>
+        <link>{{ site.url }}{{ note.url }}</link>
+        <guid isPermaLink="true">{{ site.url }}{{ note.url }}</guid>{% for tag in note.tags %}
+        <category>{{ tag }}</category>{% endfor %}
+      </item>
+    {% endfor %}
+  </channel>
+</rss>

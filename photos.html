@@ -1,0 +1,29 @@
+---
+title: Photos
+layout: default
+type: photos
+---
+
+<div class="photos-wrapper" id="photos">
+{% assign photos = site.data.photos | reverse %}
+{% for photo in photos %}
+  {% assign ratio = photo.meta.ratio | default: 1 | plus: 0 %}
+  <figure id="P{{ photo.id }}" class="{% if ratio > 1 %}figure-landscape{% endif %}">
+    <img src="{{ photo.url }}"
+         alt="{{ photo.meta.alt }}"
+         loading="lazy"
+         class="{% if ratio > 1 %}landscape{% elsif ratio < 1 %}portrait{% else %}square{% endif %}"
+         style="aspect-ratio: {{ photo.meta.ratio }};">
+    <figcaption>
+      {% if photo.meta.caption %}<p>{{ photo.meta.caption }}</p>{% endif %}
+      <div class="photo-metadata">
+        <time datetime="{{ photo.uploaded | date_to_xmlschema }}">{{ photo.uploaded | date: "%Y/%m/%d" }}</time>
+      </div>
+    </figcaption>
+  </figure>
+{% endfor %}
+</div>
+
+{% if site.data.photos == empty %}
+  <p class="desc">No photos yet. Add entries to <code>_data/photos.json</code>, or wire up the media workflow described in the README.</p>
+{% endif %}
