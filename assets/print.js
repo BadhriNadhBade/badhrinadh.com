@@ -166,15 +166,8 @@ if (form) {
       return
     }
 
-    if (!name) {
-      setStatus('Name is required.', 'err')
-      return
-    }
-
-    // Message and image are each optional, but a receipt with neither is a
-    // blank strip of paper, so require at least one.
-    if (!body && !imageB64) {
-      setStatus('Add a message or attach an image.', 'err')
+    if (!name || !body) {
+      setStatus('Name and message are both required.', 'err')
       return
     }
 
