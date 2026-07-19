@@ -939,3 +939,10 @@ label:has(input:not(:checked)) ~ label:has(input:not(:checked)) ~ label:has(inpu
     color: var(--textColor);
   }
 }
+
+// The site name on the home page. Scoped to the root page so post and note
+// titles, which share .h1, keep the light weight. The 600 face is already
+// loaded in the layout.
+body:not(.post-body) .h1 {
+  font-weight: 600;
+}

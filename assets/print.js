@@ -13,6 +13,10 @@
 const PRINT_ENDPOINT = 'https://print.badhrinadh.com/contact'
 const COUNT_ENDPOINT = 'https://print.badhrinadh.com/contact/count'
 const CHAR_LIMIT = 500
+
+// Deliberately loose. Anything stricter rejects valid addresses, and the
+// field is optional anyway — this only catches obvious typos like "kjdk".
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 const MAX_IMAGE_BYTES = 10 * 1024 * 1024
 
 const form = document.querySelector('#print-form')
@@ -124,12 +128,27 @@ if (form) {
       return
     }
 
-    if (!name || !body) {
-      setStatus('Name and message are both required.', 'err')
+    if (!name) {
+      setStatus('Name is required.', 'err')
       return
     }
+
+    // Message and image are each optional, but a receipt with neither is a
+    // blank strip of paper, so require at least one.
+    if (!body && !imageB64) {
+      setStatus('Add a message or attach an image.', 'err')
+      return
+    }
+
     if (body.length > CHAR_LIMIT) {
       setStatus(`Message must be ${CHAR_LIMIT} characters or fewer.`, 'err')
+      return
+    }
+
+    // Email stays optional, but a malformed one is worth catching here
+    // rather than letting the server reject the whole submission.
+    if (email && !EMAIL_PATTERN.test(email)) {
+      setStatus("That email doesn't look right.", 'err')
       return
     }
 
@@ -158,7 +177,13 @@ if (form) {
         setStatus("You've sent too many messages — please wait an hour before trying again.", 'err')
         return
       }
-      if (!res.ok) throw new Error(json.error || 'server error')
+      // Show what the server actually objected to. Collapsing every 4xx into
+      // a generic "could not send" hides fixable problems from the person
+      // who can fix them.
+      if (!res.ok) {
+        setStatus(json.error || 'Could not send — try again.', 'err')
+        return
+      }
 
       setStatus(
         json.queued
