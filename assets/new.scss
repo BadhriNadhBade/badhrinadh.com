@@ -864,3 +864,78 @@ label:has(input:not(:checked)) ~ label:has(input:not(:checked)) ~ label:has(inpu
   &[data-kind="ok"] { color: var(--activeColor); }
   &[data-kind="err"] { color: var(--textColor); }
 }
+
+// Image attachment. The file inputs are visually hidden and driven by their
+// labels, which is the only way to style a file picker consistently.
+
+.print-attach {
+  display: flex;
+  align-items: center;
+  gap: .6em;
+  flex-wrap: wrap;
+}
+
+.print-file {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+
+  // The label is the visible control, so the focus ring has to be drawn
+  // from the input's focus state or keyboard users get nothing.
+  &:focus-visible + .print-attach-btn {
+    outline: 2px solid var(--linkColor);
+    outline-offset: 1px;
+  }
+}
+
+.print-attach-btn {
+  font-size: .7em;
+  color: var(--secondaryTextColor);
+  background: var(--subtleBackgroundColor);
+  border: 1px solid var(--borderColor);
+  border-radius: .4em;
+  padding: .5em .9em;
+  cursor: pointer;
+
+  &:hover {
+    border-color: var(--linkColor);
+    color: var(--linkColor);
+  }
+}
+
+// "capture" only opens a camera on touch devices; on a desktop it just
+// opens another file picker, so the button is pointless there.
+.print-attach-btn--camera {
+  display: none;
+}
+
+@media (pointer: coarse) {
+  .print-attach-btn--camera {
+    display: inline-block;
+  }
+}
+
+.print-attach-name {
+  font-size: .7em;
+  color: var(--mutedTextColor);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 14em;
+}
+
+.print-attach-clear {
+  font-size: .7em;
+  color: var(--mutedTextColor);
+  background: transparent;
+  border: 0;
+  padding: .3em;
+  cursor: pointer;
+  text-decoration: underline;
+
+  &:hover {
+    color: var(--textColor);
+  }
+}

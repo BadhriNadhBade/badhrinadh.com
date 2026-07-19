@@ -57,6 +57,22 @@ root: true
   </label>
 
   {% comment %}
+    Optional image. Read to base64 in the browser and sent inline — the
+    server never fetches a URL. The camera input is only surfaced on touch
+    devices, where "capture" actually opens a camera.
+  {% endcomment %}
+  <div class="print-attach">
+    <input type="file" id="print-image" accept="image/png,image/jpeg,image/gif,image/webp" class="print-file">
+    <label for="print-image" class="print-attach-btn monospace">Attach an image</label>
+
+    <input type="file" id="print-camera" accept="image/png,image/jpeg,image/webp" capture="environment" class="print-file">
+    <label for="print-camera" class="print-attach-btn print-attach-btn--camera monospace">Take a photo</label>
+
+    <span class="print-attach-name monospace" id="print-image-name"></span>
+    <button type="button" class="print-attach-clear monospace" id="print-image-clear" hidden>Remove</button>
+  </div>
+
+  {% comment %}
     Honeypot. Bots fill every field they find; humans never see this one.
     Kept out of the tab order and hidden from assistive tech.
   {% endcomment %}
