@@ -112,14 +112,6 @@ h1, h2, h3, h4, h5, h6 {
   font-weight: 300;
 }
 
-.logo {
-  width: 2em;
-
-  path {
-    stroke: var(--logoColor);
-  }
-}
-
 .logo-container {
   display: flex;
   align-items: center;
@@ -129,17 +121,6 @@ h1, h2, h3, h4, h5, h6 {
   .logo-container {
     line-height: 1em;
     color: var(--mutedTextColor);
-  }
-
-  .logo {
-    width: 1em;
-    margin-left: .8em;
-    margin-right: .4em;
-
-    path {
-      stroke: var(--mutedTextColor);
-      stroke-width: 16;
-    }
   }
 
   .h1 {
@@ -153,7 +134,7 @@ h1, h2, h3, h4, h5, h6 {
 
 .h1 {
   font-size: 1.2rem;
-  font-weight: 300;
+  font-weight: 600;
   margin-bottom: 0;
 }
 
@@ -938,11 +919,4 @@ label:has(input:not(:checked)) ~ label:has(input:not(:checked)) ~ label:has(inpu
   &:hover {
     color: var(--textColor);
   }
-}
-
-// The site name on the home page. Scoped to the root page so post and note
-// titles, which share .h1, keep the light weight. The 600 face is already
-// loaded in the layout.
-body:not(.post-body) .h1 {
-  font-weight: 600;
 }

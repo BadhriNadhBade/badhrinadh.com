@@ -59,15 +59,13 @@
   <body class="{% if page.root != true %}post-body{% endif %} col-{{ page.collection }}" data-page-type="{{ page.type }}">
     <header>
       {% comment %}
-        The monogram is a wayfinding cue for inner pages — it sits next to the
-        back arrow and the site name. The home page doesn't need it: you're
-        already there, and there's nothing to navigate back to. Dropping the
-        whole container rather than just the SVG avoids leaving an empty div.
+        Inner pages get a back arrow and the site name. The monogram is
+        deliberately absent from the page body — it survives only as the
+        browser-tab icon (assets/fav.svg, linked in <head>).
       {% endcomment %}
       {% if page.root != true %}
         <div class="logo-container">
           <a href="/{% if page.collection == "notes" %}notes{% endif %}" aria-label="Home" class="back-link">&leftarrow;</a>
-          {% include logo.html %}
           <span class="font">Badhri Nadh</span>
         </div>
       {% endif %}
