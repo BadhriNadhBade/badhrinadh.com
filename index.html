@@ -33,6 +33,65 @@ root: true
 
 <hr class="hr">
 
+<h2 class="normal-heading">Print me a message</h2>
+<span class="print-count monospace" id="print-count" hidden><span id="print-count-n">—</span> printed</span>
+
+<p class="desc">
+  There's a thermal receipt printer on my desk. Write something and it prints out.
+</p>
+
+<form id="print-form" class="print-form" novalidate>
+  <label class="print-field">
+    <span class="print-label monospace">Name</span>
+    <input type="text" name="name" required autocomplete="name" maxlength="80">
+  </label>
+
+  <label class="print-field">
+    <span class="print-label monospace">Email <span class="print-optional">(optional)</span></span>
+    <input type="email" name="email" autocomplete="email" maxlength="120">
+  </label>
+
+  <label class="print-field">
+    <span class="print-label monospace">Message</span>
+    <textarea name="message" required rows="4" maxlength="500"></textarea>
+  </label>
+
+  {% comment %}
+    Optional image. Read to base64 in the browser and sent inline — the
+    server never fetches a URL. The camera input is only surfaced on touch
+    devices, where "capture" actually opens a camera.
+  {% endcomment %}
+  <div class="print-attach">
+    <input type="file" id="print-image" accept="image/png,image/jpeg,image/gif,image/webp" class="print-file">
+    <label for="print-image" class="print-attach-btn monospace">Attach an image</label>
+
+    <input type="file" id="print-camera" accept="image/png,image/jpeg,image/webp" capture="environment" class="print-file">
+    <label for="print-camera" class="print-attach-btn print-attach-btn--camera monospace">Take a photo</label>
+
+    <span class="print-attach-name monospace" id="print-image-name"></span>
+    <button type="button" class="print-attach-clear monospace" id="print-image-clear" hidden>Remove</button>
+  </div>
+
+  {% comment %}
+    Honeypot. Bots fill every field they find; humans never see this one.
+    Kept out of the tab order and hidden from assistive tech.
+  {% endcomment %}
+  <input type="text" name="_trap" tabindex="-1" aria-hidden="true" autocomplete="off" class="print-trap">
+
+  <div class="print-actions">
+    <button type="submit" class="print-button monospace">Print it</button>
+    <span class="print-remaining monospace" id="print-remaining" aria-live="polite">0 / 500</span>
+  </div>
+
+  <p class="print-status monospace" id="print-status" role="status" aria-live="polite"></p>
+
+  <noscript>
+    <p class="desc">This needs JavaScript — the printer is on the other end of an API.</p>
+  </noscript>
+</form>
+
+<hr class="hr">
+
 <h2 class="normal-heading">Photos</h2><a href="/photos" class="styled-link">All photos</a> <a href="/photos.xml" class="styled-link">RSS</a>
 <div class="photos">
 {% assign photos = site.data.photos | reverse | slice: 0, 10 %}
