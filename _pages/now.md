@@ -11,12 +11,12 @@ Last updated {{ page.date | date: "%b %e, %Y" }}.
 
 ## Working on
 
-- Rebuilding this site.
+- Rebuilding this site & fixing the applications on homelab.
 
 ## Reading
 
-- Nothing logged yet.
+- just manhua and comics every now & then.
 
 ## Learning
 
-- Nothing logged yet.
+- proxy managers & infrastructure management.
