@@ -9,12 +9,12 @@ header_content: Hardware and software I use day to day.
 
 ## Editor
 
-- Nothing logged yet.
+- nano.
 
 ## Terminal
 
-- Nothing logged yet.
+- mobaxterm.
 
 ## Hardware
 
-- Nothing logged yet.
+- headless mac, m710q's pve cluster.
