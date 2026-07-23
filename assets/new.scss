@@ -669,6 +669,11 @@ nav {
   gap: .6em;
   align-items: center;
   margin: .6em 0;
+
+  // A nested nav (e.g. Social inside Profession) sits on the same line.
+  nav {
+    margin: 0;
+  }
 }
 
 open-heart:not(:defined) {
