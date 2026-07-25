@@ -2,6 +2,12 @@
 title: Badhri Nadh
 layout: default
 root: true
+# Old photo gallery URLs. The gallery is gone; these send anything still
+# pointing at it here instead of to a 404.
+redirect_from:
+  - /photos
+  - /photos.html
+  - /photos.xml
 ---
 
 <!-- PLACEHOLDER COPY — replace all three paragraphs below with your own. -->
@@ -91,18 +97,6 @@ root: true
     <p class="desc">This needs JavaScript — the printer is on the other end of an API.</p>
   </noscript>
 </form>
-
-<hr class="hr">
-
-<h2 class="normal-heading">Photos</h2><a href="/photos" class="styled-link">All photos</a> <a href="/photos.xml" class="styled-link">RSS</a>
-<div class="photos">
-{% assign photos = site.data.photos | reverse | slice: 0, 10 %}
-{% for photo in photos %}
-  <a href="/photos#P{{ photo.id }}" class="image-link">
-    <img src="{{ photo.thumbnail }}" height="200" alt="{{ photo.meta.alt }}" loading="lazy" style="aspect-ratio: {{ photo.meta.ratio }};">
-  </a>
-{% endfor %}
-</div>
 
 <hr class="hr">
 

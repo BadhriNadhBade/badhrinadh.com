@@ -28,7 +28,6 @@ The following directories and their contents are Copyright Badhri Nadh. You may
 not reuse anything therein without my permission:
 
 ```
-_data/
 _posts/
 _notes/
 _pages/

@@ -11,6 +11,11 @@ collections:
     output: true
   pages:
     output: true
+# Ships with the github-pages gem but is off by default, so it has to be named
+# here. Generates redirect pages at build time from `redirect_from` front
+# matter — see index.html, which absorbs the URLs of the removed photo gallery.
+plugins:
+  - jekyll-redirect-from
 i18n:
   en-US:
     accessibility: Accessibility statement
