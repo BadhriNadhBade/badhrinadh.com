@@ -31,7 +31,7 @@ markdown: CommonMarkGhPages
 commonmark:
   options: ["UNSAFE", "HARDBREAKS"]
   extensions: ["strikethrough", "autolink", "table"]
-recent_date: "2026/07/18"
+recent_date: "2026/08/20"
 exclude:
   - README.md
   - start
