@@ -20,7 +20,22 @@ jobs:
 
       - name: Update robots.txt
         run: |
-          curl -fsSL https://raw.githubusercontent.com/ai-robots-txt/ai.robots.txt/refs/heads/main/robots.txt > robots.txt
+          # Upstream replaces the file wholesale, so our own directives have to
+          # be re-appended every run or they silently vanish the next Monday.
+          # Staged through a temp file so a failed fetch leaves robots.txt alone
+          # rather than truncating it.
+          curl -fsSL https://raw.githubusercontent.com/ai-robots-txt/ai.robots.txt/refs/heads/main/robots.txt > upstream-robots.txt
+          {
+            cat upstream-robots.txt
+            echo
+            echo "# Everything not named above. Crawlers match the most specific"
+            echo "# user-agent group, so the blocklist still wins for those."
+            echo "User-agent: *"
+            echo "Allow: /"
+            echo
+            echo "Sitemap: https://badhrinadh.com/sitemap.xml"
+          } > robots.txt
+          rm upstream-robots.txt
           git config user.email "bot@badhrinadh.com"
           git config user.name "guardian [bot]"
           git add robots.txt

@@ -179,3 +179,10 @@ User-agent: YiyanBot
 User-agent: YouBot
 User-agent: ZanistaBot
 Disallow: /
+
+# Everything not named above. Crawlers match the most specific
+# user-agent group, so the blocklist still wins for those.
+User-agent: *
+Allow: /
+
+Sitemap: https://badhrinadh.com/sitemap.xml

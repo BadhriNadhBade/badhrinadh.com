@@ -6,6 +6,7 @@ permalink: /notes.xml
   <channel>
     <title>{{ site.title }}'s notes</title>
     <description>Micro posts.</description>
+    <language>en-US</language>
     {% assign notes = site.notes | reverse %}
     <lastBuildDate>{{ notes.first.date | date_to_rfc822 }}</lastBuildDate>
     <link>{{ site.url }}</link>

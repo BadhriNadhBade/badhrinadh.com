@@ -10,28 +10,42 @@ redirect_from:
   - /photos.xml
 ---
 
-<!-- PLACEHOLDER COPY — replace all three paragraphs below with your own. -->
 <p>
-  Infrastructure engineer. Builds small tools, webpages and homelab.
+  Infrastructure engineer. Builds small tools, web pages, and a homelab.
 </p>
 <p>
   Lives in Dallas. <span class="time" data-timestamp-text="It is currently {time}."></span>
 </p>
 
+{% comment %}
+  Derived from the newest post or note rather than a hand-kept date in
+  _config.yml, which went stale the moment anything else was published.
+  Compared as epoch seconds because Liquid has no date comparison.
+{% endcomment %}
+{% assign post_ts = site.posts.first.date | date: "%s" | plus: 0 %}
+{% assign note_ts = site.notes.last.date | date: "%s" | plus: 0 %}
+{% if note_ts > post_ts %}
+  {% assign last_updated = site.notes.last.date %}
+{% else %}
+  {% assign last_updated = site.posts.first.date %}
+{% endif %}
+{% if last_updated %}
 <p>
-  As recent as {{ site.recent_date | date: "%b %e, %Y" }}, writing code, upgrading homelab, started gardening, and keeping this page up to date.
+  Currently writing code, upgrading the homelab, and learning to garden.
+  Last updated {{ last_updated | date: "%b %e, %Y" }}.
 </p>
+{% endif %}
 
 <p>
-  You can check my other projects down here.
+  Other things I keep online:
 </p>
 
-<nav aria-label="Profession">
-  <a href="{% link _pages/now.md %}">Now</a><hr class="inline-hr">
+<nav aria-label="Projects">
+  <a href="{% link _pages/now.md %}">Now</a><hr class="inline-hr" aria-hidden="true">
   <a href="https://devtools.badhrinadh.com/" rel="me">DevTools</a>
   <a href="https://play.badhrinadh.com/" rel="me">Games</a>
   <a href="https://lab.badhrinadh.com/" rel="me">Sandbox</a>
-  <hr class="inline-hr">
+  <hr class="inline-hr" aria-hidden="true">
   <nav aria-label="Social">
     <a href="https://github.com/BadhriNadhBade" rel="me">GitHub</a>
   </nav>
@@ -43,7 +57,9 @@ redirect_from:
 <span class="print-count monospace" id="print-count" hidden><span id="print-count-n">—</span> printed</span>
 
 <p class="desc">
-  There's a thermal receipt printer on my desk. Write something and it prints out.
+  There's a thermal receipt printer on my desk. Write something and it prints
+  out on real paper, a few feet from where I'm sitting. Attach a photo and that
+  prints too.
 </p>
 
 <form id="print-form" class="print-form" novalidate>
@@ -57,9 +73,15 @@ redirect_from:
     <input type="email" name="email" autocomplete="email" maxlength="120">
   </label>
 
+  {% comment %}
+    The character count is wired up with aria-describedby rather than a live
+    region. As a live region it re-announced "1 / 500", "2 / 500" on every
+    single keystroke; described-by means screen readers read it once on focus,
+    and maxlength stops anyone overrunning it regardless.
+  {% endcomment %}
   <label class="print-field">
     <span class="print-label monospace">Message</span>
-    <textarea name="message" required rows="4" maxlength="500"></textarea>
+    <textarea name="message" required rows="4" maxlength="500" aria-describedby="print-remaining"></textarea>
   </label>
 
   {% comment %}
@@ -88,7 +110,7 @@ redirect_from:
 
   <div class="print-actions">
     <button type="submit" class="print-button monospace">Print it</button>
-    <span class="print-remaining monospace" id="print-remaining" aria-live="polite">0 / 500</span>
+    <span class="print-remaining monospace" id="print-remaining">0 / 500</span>
   </div>
 
   <p class="print-status monospace" id="print-status" role="status" aria-live="polite"></p>

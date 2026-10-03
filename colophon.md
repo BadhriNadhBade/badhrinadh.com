@@ -10,11 +10,11 @@ The architecture, layout structure, and colour palette are adapted from [muan.co
 
 ## Type
 
-Body text is [IBM Plex Sans](https://fonts.google.com/specimen/IBM+Plex+Sans). Monospace is whatever your system provides.
+Body text is [IBM Plex Sans](https://github.com/IBM/plex), served from this domain rather than from Google Fonts — it keeps two third-party connections off the critical path, and no request for this page leaves badhrinadh.com. The roman is a variable font covering weights 300 to 600, so headings and body text are one download. Monospace is whatever your system provides.
 
 ## JavaScript
 
-Almost none. There is a share button that only appears if your browser supports the Web Share API, and a clock on the home page. Everything else is HTML and CSS. If you disable JavaScript, the only thing you lose is the clock.
+Almost none. There is a share button that only appears if your browser supports the Web Share API, a clock on the home page, and the form that talks to the receipt printer. Everything else is HTML and CSS. If you disable JavaScript you lose the clock and the printer; the rest of the site is unaffected.
 
 ## Colour
 

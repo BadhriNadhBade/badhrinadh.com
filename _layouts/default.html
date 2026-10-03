@@ -8,13 +8,22 @@
   <head>
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <meta content="text/html; charset=utf-8" http-equiv="content-type">
-    <link rel="alternate" type="application/rss+xml" href="/notes.xml">
+    <link rel="alternate" type="application/rss+xml" title="{{ site.title }}" href="/feed.xml">
+    <link rel="alternate" type="application/rss+xml" title="{{ site.title }}'s notes" href="/notes.xml">
     <link rel="icon" href="/assets/fav.svg" type="image/svg+xml" sizes="24x24">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,300;1,300&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@600&display=swap" rel="stylesheet">
+    <link rel="canonical" href="{{ site.url }}{{ page.url }}">
+    {% comment %}
+      Fonts are self-hosted (assets/fonts, @font-face in new.scss) rather than
+      pulled from Google — it drops two third-party connections off the
+      critical path and means no visitor data leaves this domain. Only the
+      roman file is preloaded; it is a variable face covering 300-600, so it
+      serves both body text and headings. The italic and latin-ext subsets are
+      left to load on demand via unicode-range.
+    {% endcomment %}
+    <link rel="preload" href="/assets/fonts/plex-sans-latin.woff2" as="font" type="font/woff2" crossorigin>
     <link href="/assets/new.css" rel="stylesheet" type="text/css">
+    <meta name="theme-color" content="#fdfdfd" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#151615" media="(prefers-color-scheme: dark)">
     {% if page.collection == "posts" %}
       <link href="/assets/syntax.css" rel="stylesheet" type="text/css">
     {% endif %}
@@ -27,32 +36,44 @@
       <meta content="{{ site.title }}" property="og:site_name">
       <meta content="{{ site.title }}" name="twitter:title">
     {% endif %}
-    {% if page.collection == "posts" or page.collection == "notes" %}
-      <meta content="article" property="og:type">
-      <meta content="{{ site.url }}{{ page.url }}" property="og:url">
-      <meta content="{{ page.content | strip_html | truncate: 240 }}" name="description">
-      <meta content="{{ page.content | strip_html | truncate: 240 }}" name="og:description">
-      <meta content="{{ page.date | date_to_xmlschema }}" name="og:published_time">
-      <meta content="Badhri Nadh" property="profile:username">
-      <meta name="twitter:card" content="summary_large_image">
-      {% if page.image %}
-        <meta content="{{ site.url }}/images/{{ page.image }}" property="og:image">
-        <meta content="{{ site.url }}/images/{{ page.image }}" property="twitter:image">
-      {% else %}
-        <meta property="og:image:width" content="200">
-        <meta property="og:image:height" content="200">
-        <meta content="{{ site.url }}/assets/logo.png" property="twitter:image">
-        <meta content="{{ site.url }}/assets/logo.png" property="og:image">
-      {% endif %}
+    {% comment %}
+      Share card. Everything shares one 1200x630 image (assets/og.png) unless a
+      post names its own in front matter, so the dimensions and alt text below
+      are only emitted for the default. This previously pointed at
+      assets/logo.png, which has never existed in this repo — every share
+      rendered without an image.
+    {% endcomment %}
+    {% if page.image %}
+      {% assign share_image = site.url | append: "/images/" | append: page.image %}
     {% else %}
-      <meta content="summary" name="twitter:card">
-      <meta property="og:image:width" content="200">
-      <meta property="og:image:height" content="200">
-      <meta content="{{ site.url }}/assets/logo.png" property="twitter:image">
-      <meta content="{{ site.url }}/assets/logo.png" property="og:image">
-      <meta content="{{ site.description }}" name="description">
+      {% assign share_image = site.url | append: "/assets/og.png" %}
+    {% endif %}
+    <meta content="summary_large_image" name="twitter:card">
+    <meta content="{{ share_image }}" property="og:image">
+    <meta content="{{ share_image }}" name="twitter:image">
+    <meta content="{{ site.url }}{{ page.url }}" property="og:url">
+    {% unless page.image %}
+      <meta content="1200" property="og:image:width">
+      <meta content="630" property="og:image:height">
+      <meta content="Badhri Nadh — infrastructure engineer" property="og:image:alt">
+    {% endunless %}
+    {% comment %}
+      Post and note bodies become the description. normalize_whitespace matters
+      here: raw Markdown keeps its newlines through strip_html, and a newline
+      inside a content attribute truncates the tag in some parsers.
+    {% endcomment %}
+    {% if page.collection == "posts" or page.collection == "notes" %}
+      {% assign share_desc = page.content | strip_html | normalize_whitespace | truncate: 200 %}
+      <meta content="article" property="og:type">
+      <meta content="{{ page.date | date_to_xmlschema }}" property="article:published_time">
+      <meta content="Badhri Nadh" property="article:author">
+    {% else %}
+      {% assign share_desc = site.description %}
       <meta content="website" property="og:type">
     {% endif %}
+    <meta content="{{ share_desc | xml_escape }}" name="description">
+    <meta content="{{ share_desc | xml_escape }}" property="og:description">
+    <meta content="{{ share_desc | xml_escape }}" name="twitter:description">
     <link type="text/plain" rel="author" href="{{ site.url }}/humans.txt" />
   </head>
 
@@ -116,11 +137,16 @@
     </main>
     <footer>
       <hr class="hr">
+      {% comment %}
+        The inline-hr rules are bullet separators, not structure, so they are
+        hidden from assistive tech — otherwise each one is announced as
+        "separator" between the links.
+      {% endcomment %}
       <nav class="monospace" aria-label="About this site">
         <a href="/accessibility-statement">{{ site.i18n[lang].accessibility }}</a>
-        <hr class="inline-hr">
+        <hr class="inline-hr" aria-hidden="true">
         <a href="/colophon">{{ site.i18n[lang].colophon }}</a>
-        <hr class="inline-hr">
+        <hr class="inline-hr" aria-hidden="true">
         <a href="https://github.com/BadhriNadhBade/badhrinadh.com">{{ site.i18n[lang].source }}</a>
       </nav>
     </footer>

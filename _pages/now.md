@@ -5,8 +5,6 @@ type: static
 header_content: What I'm focused on at the moment.
 ---
 
-<!-- PLACEHOLDER — replace with your own. See https://nownownow.com/about -->
-
 ## Working on
 
 - Rebuilding this site & fixing the applications on homelab.

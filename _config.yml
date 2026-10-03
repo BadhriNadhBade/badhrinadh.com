@@ -16,6 +16,10 @@ collections:
 # matter — see index.html, which absorbs the URLs of the removed photo gallery.
 plugins:
   - jekyll-redirect-from
+  # Also ships with github-pages and off by default. Generates /sitemap.xml;
+  # the Sitemap: line in robots.txt is appended by .github/workflows/robots.yml,
+  # since that file is overwritten wholesale from upstream every week.
+  - jekyll-sitemap
 i18n:
   en-US:
     accessibility: Accessibility statement
@@ -31,7 +35,6 @@ markdown: CommonMarkGhPages
 commonmark:
   options: ["UNSAFE", "HARDBREAKS"]
   extensions: ["strikethrough", "autolink", "table"]
-recent_date: "2026/08/20"
 exclude:
   - README.md
   - start
