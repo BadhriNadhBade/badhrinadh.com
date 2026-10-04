@@ -1,0 +1,30 @@
+{% comment %}
+  The menu bar. On mobile the section links collapse into the "menu" dropdown
+  (#mi-group); on a desktop they flow inline.
+
+  `.cur` is decided on page.path rather than page.url, because the URLs here
+  depend on permalink settings in two different places (the global `permalink`,
+  and each collection's) while the source path is always the source path.
+
+  The control panel button and the clock do nothing without JavaScript, so
+  neither is load-bearing — the clock ships with a placeholder rather than a
+  claim about the time.
+{% endcomment %}
+<div id="menubar">
+  <button class="mi star" data-control type="button" aria-label="Control panel" title="Appearance, accent, wallpaper">✦</button>
+  <a class="mi home" href="/" aria-label="Home" title="Home">⌂</a>
+  <button class="mi menu-toggle" data-menu type="button" aria-expanded="false" aria-controls="mi-group">menu</button>
+
+  <nav class="mi-group" id="mi-group" aria-label="Sections">
+    <a class="mi {% if page.path == 'posts.html' or page.collection == 'posts' %}cur{% endif %}" href="/posts/">writing</a>
+    <a class="mi {% if page.path == 'notes.html' or page.collection == 'notes' %}cur{% endif %}" href="/notes">notes</a>
+    <a class="mi {% if page.path == '_pages/now.md' %}cur{% endif %}" href="{% link _pages/now.md %}">now</a>
+    <a class="mi" href="https://devtools.badhrinadh.com/" rel="me">devtools<span class="ext" aria-hidden="true">↗</span></a>
+    <a class="mi" href="https://play.badhrinadh.com/" rel="me">games<span class="ext" aria-hidden="true">↗</span></a>
+    <a class="mi" href="https://lab.badhrinadh.com/" rel="me">sandbox<span class="ext" aria-hidden="true">↗</span></a>
+    <a class="mi" href="https://github.com/BadhriNadhBade" rel="me">github<span class="ext" aria-hidden="true">↗</span></a>
+  </nav>
+
+  <span class="spacer"></span>
+  <span id="clock" title="My time, in Dallas">--:--</span>
+</div>

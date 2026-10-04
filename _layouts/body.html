@@ -1,0 +1,62 @@
+{% comment %}
+  The shell every page is built on: menu bar, desk icons, and the desktop
+  that the window layouts drop into.
+
+  Language is inferred the same way it always was — add index-xx-XX.html plus
+  an i18n block in _config.yml to add one.
+{% endcomment %}
+{% assign lang = "en-US" %}
+<!doctype html>
+<html lang="{{ lang }}">
+  <head>
+    {% include head.html %}
+  </head>
+
+  {% comment %}
+    Hooks for anything that needs to target one kind of page. Emitted only when
+    they have a value, so a plain page gets a bare <body>.
+  {% endcomment %}
+  <body{% if page.collection %} class="col-{{ page.collection }}"{% endif %}{% if page.type %} data-page-type="{{ page.type }}"{% endif %}>
+    <a class="skip" href="#main">Skip to content</a>
+
+    {% include nav.html %}
+
+    {% comment %}
+      Desk icons. Two of them are shortcuts to real pages; snake.exe is a toy
+      and needs JavaScript, so it is a button rather than a dead link.
+    {% endcomment %}
+    <div class="desk-icons">
+      <a href="/posts/" class="dicon" title="Everything I've written">
+        <span class="glyph glyph-doc" aria-hidden="true"></span>
+        <span class="lbl">posts.md</span>
+      </a>
+      <a href="/notes" class="dicon" title="Short notes">
+        <span class="glyph glyph-doc" aria-hidden="true"></span>
+        <span class="lbl">notes.md</span>
+      </a>
+      <a href="/#print-form" class="dicon" title="Print something on the receipt printer">
+        <span class="glyph glyph-print" aria-hidden="true"></span>
+        <span class="lbl">print.app</span>
+      </a>
+      <button type="button" class="dicon" data-snake title="Play snake">
+        <span class="glyph glyph-snake" aria-hidden="true"></span>
+        <span class="lbl">snake.exe</span>
+      </button>
+    </div>
+
+    <div id="desktop">
+      {% comment %}
+        tabindex="-1" so the skip link actually moves focus here, not just the
+        scroll position — a <main> isn't focusable on its own.
+      {% endcomment %}
+      <main id="main" tabindex="-1">
+        {{ content }}
+      </main>
+    </div>
+
+    <script src="/assets/desk.js" defer></script>
+    {% if page.root %}
+      <script type="module" src="/assets/print.js"></script>
+    {% endif %}
+  </body>
+</html>

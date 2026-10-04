@@ -1,0 +1,41 @@
+{% comment %}
+  The like button. It only renders once site.open_heart_endpoint is configured,
+  so it can't ship pointing at a URL that goes nowhere — which also means it is
+  the one place a third-party script enters the page, and only once you have
+  opted in. Point the config at your own instance of
+  https://github.com/dddddddddzzzz/OpenHeart to turn it on.
+
+  Liquid has no parentheses and evaluates and/or right-to-left, so the
+  condition is built up in steps rather than written inline.
+{% endcomment %}
+{% assign wants_heart = false %}
+{% if page.feature == 1 or page.open_heart %}{% assign wants_heart = true %}{% endif %}
+{% assign show_heart = false %}
+{% if wants_heart and site.open_heart_endpoint != "" %}{% assign show_heart = true %}{% endif %}
+
+{% if show_heart %}
+  <hr>
+  <p class="linkrow" id="like-prompt">
+    Like this {% if page.collection == "posts" %}post{% elsif page.collection == "notes" %}note{% else %}page{% endif %}? Let me know:
+    <open-heart href="{{ site.open_heart_endpoint }}?id={{ page.url }}" emoji="❤️" aria-labelledby="like-prompt">❤️</open-heart>
+  </p>
+
+  <script type="module" src="https://unpkg.com/open-heart-element@latest"></script>
+  <script type="module">
+    // Fetch the count only when the button scrolls into view, so a page that is
+    // never read never calls the endpoint.
+    const observer = new IntersectionObserver((entries, observer) => {
+      entries.forEach(async (entry) => {
+        await customElements.whenDefined('open-heart')
+        if (entry.target instanceof OpenHeartElement && entry.isIntersecting) {
+          entry.target.getCount()
+          observer.unobserve(entry.target)
+        }
+      })
+    })
+
+    for (const oh of document.querySelectorAll('open-heart')) {
+      observer.observe(oh)
+    }
+  </script>
+{% endif %}

@@ -11,6 +11,26 @@ collections:
     output: true
   pages:
     output: true
+# Each kind of content gets its own window layout, set here rather than in every
+# file's front matter — a new post or note needs no `layout:` line at all. Pages
+# at the repo root (colophon.md, accessibility-statement.md) aren't in a
+# collection, so they name `layout: page` themselves.
+defaults:
+  - scope:
+      path: ""
+      type: posts
+    values:
+      layout: post
+  - scope:
+      path: ""
+      type: notes
+    values:
+      layout: note
+  - scope:
+      path: ""
+      type: pages
+    values:
+      layout: page
 # Ships with the github-pages gem but is off by default, so it has to be named
 # here. Generates redirect pages at build time from `redirect_from` front
 # matter — see index.html, which absorbs the URLs of the removed photo gallery.

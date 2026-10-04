@@ -1,0 +1,14 @@
+{% comment %}
+  The site footer. This theme has no page-level footer — a window's content is
+  the page — so these links live at the bottom of the window content instead.
+  The separators are decorative, so they're hidden from assistive tech rather
+  than announced between every link.
+{% endcomment %}
+{% assign lang = include.lang | default: "en-US" %}
+<nav class="sitefoot" aria-label="About this site">
+  <a href="/accessibility-statement">{{ site.i18n[lang].accessibility }}</a>
+  <span aria-hidden="true">·</span>
+  <a href="/colophon">{{ site.i18n[lang].colophon }}</a>
+  <span aria-hidden="true">·</span>
+  <a href="https://github.com/BadhriNadhBade/badhrinadh.com">{{ site.i18n[lang].source }}</a>
+</nav>

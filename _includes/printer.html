@@ -1,0 +1,68 @@
+{% comment %}
+  The receipt printer form. Lives in an include so _layouts/home.html stays
+  readable; the ids and class names are the contract with assets/print.js, so
+  don't rename them without changing that too.
+{% endcomment %}
+<p class="desc">
+  There's a thermal receipt printer on my desk. Write something and it prints
+  out on real paper, a few feet from where I'm sitting. Attach a photo and that
+  prints too.
+</p>
+
+<form id="print-form" class="print-form" novalidate>
+  <label class="print-field">
+    <span class="print-label">Name</span>
+    <input type="text" name="name" required autocomplete="name" maxlength="80">
+  </label>
+
+  <label class="print-field">
+    <span class="print-label">Email <span class="print-optional">(optional)</span></span>
+    <input type="email" name="email" autocomplete="email" maxlength="120">
+  </label>
+
+  {% comment %}
+    The character count is wired up with aria-describedby rather than a live
+    region. As a live region it re-announced "1 / 500", "2 / 500" on every
+    single keystroke; described-by means screen readers read it once on focus,
+    and maxlength stops anyone overrunning it regardless.
+  {% endcomment %}
+  <label class="print-field">
+    <span class="print-label">Message</span>
+    <textarea name="message" required rows="4" maxlength="500" aria-describedby="print-remaining"></textarea>
+  </label>
+
+  {% comment %}
+    Optional image. Downscaled and re-encoded to JPEG in the browser, then
+    sent inline as base64 — the server never fetches a URL. accept="image/*"
+    rather than a type list so iOS offers HEIC straight from the camera roll.
+    The camera input is only surfaced on touch devices, where "capture"
+    actually opens a camera.
+  {% endcomment %}
+  <div class="print-attach">
+    <input type="file" id="print-image" accept="image/*" class="print-file">
+    <label for="print-image" class="print-attach-btn">Attach an image</label>
+
+    <input type="file" id="print-camera" accept="image/*" capture="environment" class="print-file">
+    <label for="print-camera" class="print-attach-btn print-attach-btn--camera">Take a photo</label>
+
+    <span class="print-attach-name" id="print-image-name"></span>
+    <button type="button" class="print-attach-clear" id="print-image-clear" hidden>Remove</button>
+  </div>
+
+  {% comment %}
+    Honeypot. Bots fill every field they find; humans never see this one.
+    Kept out of the tab order and hidden from assistive tech.
+  {% endcomment %}
+  <input type="text" name="_trap" tabindex="-1" aria-hidden="true" autocomplete="off" class="print-trap">
+
+  <div class="print-actions">
+    <button type="submit" class="print-button">Print it</button>
+    <span class="print-remaining" id="print-remaining">0 / 500</span>
+  </div>
+
+  <p class="print-status" id="print-status" role="status" aria-live="polite"></p>
+
+  <noscript>
+    <p class="desc">This needs JavaScript — the printer is on the other end of an API.</p>
+  </noscript>
+</form>

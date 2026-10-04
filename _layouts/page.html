@@ -1,0 +1,29 @@
+---
+layout: body
+---
+{% comment %}
+  One window, for everything that isn't the home page, a post, or a note:
+  static pages, the two listings, and the 404.
+
+  The window's title is the source file's name, so /colophon reads as
+  "colophon.md" — the conceit of the theme is that you are looking at my
+  desk, not at a website.
+{% endcomment %}
+{% assign fname = page.name | split: '.' | first | append: '.md' %}
+
+<div class="deskwrap">
+  <div class="window" id="win-main">
+    {% include titlebar.html file=fname href="/" label="Close to home" closable=true %}
+
+    <header class="win-hero">
+      {% if page.eyebrow %}<span class="eyebrow">{{ page.eyebrow }}</span>{% endif %}
+      <h1>{{ page.title }}</h1>
+      {% if page.header_content %}<p class="byline">{{ page.header_content }}</p>{% endif %}
+    </header>
+
+    <section class="content">
+      {{ content }}
+      {% include footer.html %}
+    </section>
+  </div>
+</div>

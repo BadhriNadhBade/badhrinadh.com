@@ -1,0 +1,81 @@
+---
+layout: body
+---
+{% comment %}
+  The desk. Three windows, cascaded so they read as things you could pick up
+  and move — which, with JavaScript, you can: drag any title bar.
+
+  about.md   the page content (index.html)
+  recent.md  newest posts and the newest note
+  print.app  the receipt printer
+{% endcomment %}
+<div class="deskwrap deskwrap-home">
+
+  <div class="window win-about" id="win-about">
+    {% include titlebar.html file="about.md" %}
+    {% if page.splashtitle %}
+      <header class="win-hero">
+        <h1>{{ page.splashtitle }}</h1>
+        {% if page.splashbyline %}<p class="byline">{{ page.splashbyline }}</p>{% endif %}
+      </header>
+    {% endif %}
+    <section class="content">
+      {{ content }}
+      {% include footer.html %}
+    </section>
+  </div>
+
+  <div class="window win-recent" id="win-recent">
+    {% include titlebar.html file="recent.md" href="/posts/" label="All posts" closable=true %}
+    <section class="content">
+      <h2>Posts</h2>
+      <ul class="listing table">
+        {% for post in site.posts limit: 5 %}
+          <li>
+            <a href="{{ post.url }}">{{ post.title }}</a>
+            <time datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: "%b %e, %Y" }}</time>
+          </li>
+        {% endfor %}
+      </ul>
+      <p class="linkrow after">
+        <a class="all" href="/posts/">all posts &rarr;</a>
+        <a class="all" href="/feed.xml">RSS</a>
+      </p>
+
+      <hr>
+
+      {% assign note = site.notes | last %}
+      <h2>Latest note</h2>
+      {% if note %}
+        <div class="note">
+          <div class="note-meta">
+            <time datetime="{{ note.date | date_to_xmlschema }}">{{ note.date | date: "%b %e, %Y" }}</time>
+            {% if note.location %}<span>{{ note.location }}</span>{% endif %}
+          </div>
+          <div class="note-content" lang="{{ note.lang | default: 'en-US' }}">{{ note.content | markdownify }}</div>
+          {% if note.tags %}
+            <div class="note-tags">{% for tag in note.tags %}<span class="note-tag" data-tag="{{ tag }}">{{ tag }}</span>{% endfor %}</div>
+          {% endif %}
+        </div>
+      {% else %}
+        <p class="desc">Nothing yet.</p>
+      {% endif %}
+      <p class="linkrow after">
+        <a class="all" href="/notes">all notes &rarr;</a>
+        <a class="all" href="/notes.xml">RSS</a>
+      </p>
+    </section>
+  </div>
+
+</div>
+
+<div class="deskwrap deskwrap-printer">
+  <div class="window win-printer" id="win-printer">
+    {% include titlebar.html file="print.app" %}
+    <section class="content">
+      <h2>Print me a message</h2>
+      <p class="print-count" id="print-count" hidden><span id="print-count-n">—</span> printed</p>
+      {% include printer.html %}
+    </section>
+  </div>
+</div>
