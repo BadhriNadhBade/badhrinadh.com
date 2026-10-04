@@ -9,9 +9,11 @@ This site is built with [Jekyll](https://jekyllrb.com/) and hosted on [GitHub Pa
 
 ## The desk
 
-The theme is a small desktop. Every page is a window on a dotted desk, titled with the name of the file it came from, with a close box that is a real link — `/colophon` is `colophon.md`, and closing it takes you home. Posts open as a new window cascaded over the posts listing, the way a second document opens over the first.
+The theme is a small desktop. Every page is a window on a dotted desk, titled with the name of the file it came from, with a close box that is a real link — `/colophon` is `colophon.md`, and closing it takes you home. Posts are listed on the front page and each opens as its own window.
 
-The window metaphor, the menu bar, and the structure of the layouts are adapted from [meowni.ca](https://meowni.ca) ([source](https://github.com/notwaldorf/notwaldorf.github.com)), MIT licensed. The palette, the light/dark handling, and the contents are mine. Before that this site was adapted from [muan.co](https://muan.co) ([source](https://github.com/muan/site)), also MIT licensed, and some of that structure survives underneath.
+The window metaphor, the menu bar, and the structure of the layouts are adapted from [meowni.ca](https://meowni.ca) by Monica Dinculescu ([source](https://github.com/notwaldorf/notwaldorf.github.com)), MIT licensed. The palette, the light/dark handling, and the contents are mine.
+
+Before the desk, this site wore a minimal theme adapted from [muan.co](https://muan.co) by muan ([source](https://github.com/muan/site)), also MIT licensed. Plenty of what holds this one up — the notes collection, the feeds, the page structure — still comes from there.
 
 ## Type
 
@@ -27,6 +29,6 @@ An accent is stored as a hue, not as a colour. Lightness comes from whichever pa
 
 ## JavaScript
 
-Almost none, and nothing you need. The script adds dragging to the window title bars, the clock in the menu bar, the control panel, and a game of snake. The printer form needs it, because the printer is on the other end of an API. Everything else — every page, post, note, listing, and the navigation — is HTML and CSS. With scripting off you get a static desk, which is still a readable site.
+Almost none, and nothing you need. The script adds dragging to the window title bars, the clock in the menu bar, and the control panel. The printer form needs it, because the printer is on the other end of an API. Everything else — every page, post, note, listing, and the navigation — is HTML and CSS. With scripting off you get a static desk, which is still a readable site.
 
 The one script this site does not serve itself is the like button on posts and notes, which loads a custom element from a CDN. It is off unless `open_heart_endpoint` is set in the config, and it is unset.

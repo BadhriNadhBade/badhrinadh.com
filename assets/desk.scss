@@ -49,7 +49,10 @@
   --paper-2: oklch(0.965 0.006 95);
   --ink: oklch(0.24 0.012 265);
   --ink-soft: oklch(0.44 0.012 265);
-  --ink-faint: oklch(0.52 0.012 265);
+  // 0.515, not 0.52: the footer sits on the wallpaper, so this token has to
+  // clear 4.5:1 on --desk-bg as well as on the two paper surfaces. At 0.52 the
+  // wallpaper came to 4.49.
+  --ink-faint: oklch(0.515 0.012 265);
   --hair: oklch(0.24 0.012 265);
   --win-shadow: 2px 2px 0 oklch(0.2 0.02 280 / 0.14), 7px 11px 28px oklch(0.2 0.02 280 / 0.16);
 
@@ -416,29 +419,22 @@ body {
 // a note is short — give it a narrower window than a post gets
 .win-note { width: min-w(620px, 100%); }
 
-// ============================================================
-// POST  — the article opens on top of the unchanged posts listing.
-// Both windows share one grid cell, so the listing keeps the exact
-// width and position it has on /posts/; opening a post never makes
-// it jump.
-// ============================================================
-.deskwrap-post {
-  position: relative;
-  display: grid;
-  grid-template-columns: 1fr;
-  justify-items: center;
+// a post gets the wide window; its close box goes home
+.win-post { width: min-w(840px, 100%); }
 
-  > .window { grid-area: 1 / 1; align-self: start; }
+// a post's header image spans the whole window, above the content box
+.post-banner {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin: 0;
 }
-.win-listing-bg {
-  width: min-w(840px, 100%);
-  z-index: 6;
-  pointer-events: none; // it's the backdrop; the article on top takes interaction
-}
-.win-post-fg {
-  z-index: 7;
-  width: min-w(840px, 100%);
-  transform: translate(28px, 28px); // cascade: open down + right of posts.md
+
+// ---- the page footer, sitting on the desk below the windows ----
+.deskfoot {
+  max-width: 1060px;
+  margin-inline: auto;
+  padding: 0 clamp(14px, 4vw, 48px) 40px;
 }
 
 // ============================================================
@@ -493,17 +489,6 @@ body {
   }
   &:hover .lbl { background: var(--accent-soft); color: var(--accent); }
 
-  // snake.exe needs JavaScript, so it is a <button>; strip the chrome so it
-  // sits in the row looking exactly like the links beside it
-  &:is(button) {
-    background: none;
-    border: 0;
-    padding: 0;
-    font: inherit;
-    color: var(--ink);
-    cursor: pointer;
-  }
-
   .glyph {
     width: 42px; height: 33px;
     background: var(--paper);
@@ -529,25 +514,6 @@ body {
 .glyph-doc::before { top: 11px; width: 26px; }
 .glyph-doc::after  { top: 18px; width: 17px; }
 
-// a snake glyph: a pixel body and a round pellet
-.glyph-snake::before {
-  content: "";
-  position: absolute;
-  left: 7px; top: 9px;
-  width: 4px; height: 4px;
-  background: var(--ink);
-  box-shadow: 6px 0 0 var(--ink), 12px 0 0 var(--ink),
-              12px 6px 0 var(--ink), 12px 12px 0 var(--ink), 6px 12px 0 var(--ink);
-}
-.glyph-snake::after {
-  content: "";
-  position: absolute;
-  right: 7px; top: 8px;
-  width: 4px; height: 4px;
-  background: var(--accent);
-  border-radius: 50%;
-}
-
 // a printer glyph: a slot with a receipt coming out
 .glyph-print::before {
   content: "";
@@ -566,65 +532,6 @@ body {
   border: 1.5px solid var(--accent);
   border-radius: 0 0 2px 2px;
 }
-
-// ============================================================
-// FLOATING WINDOWS  (snake)
-// ============================================================
-.floatwin { position: fixed; z-index: 80; }
-
-.snake-window { width: 256px; }
-.snake-body { padding: 13px; }
-
-#snake-canvas {
-  width: 100%;
-  display: block;
-  image-rendering: pixelated;
-  border: 1.5px solid var(--hair);
-  border-radius: 4px;
-  background: var(--paper-2);
-  cursor: pointer;
-  touch-action: none;
-}
-.snake-legend {
-  font-size: var(--fs-meta);
-  color: var(--ink-soft);
-  text-align: center;
-  margin: 10px 0 2px;
-
-  b { color: var(--accent); }
-}
-
-// tap d-pad for touch play
-.snake-dpad {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 6px;
-  width: 168px;
-  margin: 11px auto 2px;
-}
-.dpad-btn {
-  appearance: none;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 44px;
-  font-size: 14px;
-  line-height: 1;
-  color: var(--ink);
-  background: var(--paper);
-  border: 1.5px solid var(--hair);
-  border-radius: 5px;
-  box-shadow: 1.5px 1.5px 0 var(--hair);
-  touch-action: manipulation;
-  user-select: none;
-
-  &:active { transform: translate(1.5px, 1.5px); box-shadow: none; background: var(--accent-soft); }
-}
-.dpad-up    { grid-column: 2; grid-row: 1; }
-.dpad-left  { grid-column: 1; grid-row: 2; }
-.dpad-down  { grid-column: 2; grid-row: 2; }
-.dpad-right { grid-column: 3; grid-row: 2; }
 
 // ============================================================
 // CONTROL PANEL  (✦)
@@ -764,11 +671,6 @@ body {
   .deskwrap-printer { padding-left: 8px; padding-right: 8px; max-width: none; }
   .win-printer { width: 100%; margin: 14px 0 0; }
 
-  // post: drop the listing behind, show only the article window
-  .deskwrap-post { padding-top: 14px; }
-  .win-listing-bg { display: none; }
-  .win-post-fg { width: 100%; margin: 0; transform: none; }
-
   // the control panel becomes a bottom sheet on a phone
   .cp-scrim { align-items: flex-end; }
   .cp {
@@ -779,8 +681,6 @@ body {
     transform: translateY(100%);
   }
   .cp-scrim.in .cp { transform: translateY(0); }
-
-  .floatwin { left: 10px !important; right: 10px; width: auto !important; }
 }
 
 // page-to-page slide (modern browsers; ignored elsewhere)

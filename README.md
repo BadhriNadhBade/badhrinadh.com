@@ -3,8 +3,8 @@
 Code for https://badhrinadh.com/.
 
 A small desktop. Every page is a window on a dotted desk, titled with the name
-of the file it came from; posts cascade over the posts listing; the ✦ in the
-menu bar opens a control panel for appearance, accent and wallpaper.
+of the file it came from; the ✦ in the menu bar opens a control panel for
+appearance, accent and wallpaper.
 
 ## Technology
 
@@ -22,13 +22,13 @@ _includes/titlebar.html   one window's title bar
 _includes/printer.html    the receipt printer form
 _includes/footer.html     the footer links, rendered inside window content
 _layouts/body.html        the shell: menu bar, desk icons, desktop
-_layouts/home.html        the desk: about + recent + printer windows
+_layouts/home.html        the desk: about + posts/notes + printer windows
 _layouts/page.html        one window — static pages, listings, 404
-_layouts/post.html        a post, cascaded over the posts listing
+_layouts/post.html        a post, in its own window
 _layouts/note.html        a single note, in a smaller window
 assets/base.scss          type, tokens, prose
 assets/desk.scss          palette and window chrome
-assets/desk.js            dragging, clock, control panel, snake
+assets/desk.js            dragging, clock, control panel
 assets/print.js           the printer form
 ```
 
@@ -51,14 +51,21 @@ through a `min-w()` helper. `clamp()` is fine as-is.
 
 ## Credit
 
-The desk theme — the window metaphor, the menu bar, the layout structure — is
-adapted from [meowni.ca](https://meowni.ca)
-([source](https://github.com/notwaldorf/notwaldorf.github.com)), MIT licensed.
-The palette, the light/dark handling and the content here are my own.
+This theme is someone else's idea first, so the attribution is in the footer of
+every page as well as here.
 
-Before that, structure and layout were adapted from
-[muan.co](https://github.com/muan/site), also MIT licensed, and some of that
-survives underneath.
+The window metaphor, the menu bar and the layout structure are adapted from
+[meowni.ca](https://meowni.ca) by Monica Dinculescu
+([source](https://github.com/notwaldorf/notwaldorf.github.com)), MIT licensed.
+
+The page structure underneath — the notes collection, the feeds, the i18n
+config — is adapted from [muan.co](https://muan.co) by muan
+([source](https://github.com/muan/site)), also MIT licensed. The minimal theme
+this site wore before the desk came from there too; it still lives on the `main`
+branch.
+
+The palettes, the light/dark handling, the hue-based accent handling and the
+content here are my own.
 
 ## License
 

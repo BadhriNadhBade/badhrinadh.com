@@ -2,34 +2,13 @@
 layout: body
 ---
 {% comment %}
-  A post opens on top of the unchanged /posts/ listing. Both windows share one
-  grid cell, so the listing keeps the exact width and position it has on
-  /posts/ — opening a post never makes it jump, it just cascades a new window
-  over the old one. The close box goes back to the listing.
-
-  The backdrop is aria-hidden and pointer-events: none: it is scenery, and a
-  screen reader should not have to walk the whole archive to reach the article.
+  A post, in its own window. The close box goes home, because home is where
+  posts are listed — there is no separate archive page.
 {% endcomment %}
-<div class="deskwrap deskwrap-post">
-
-  <div class="window win-listing-bg" id="win-listing" aria-hidden="true">
-    {% include titlebar.html file="posts.md" %}
-    <header class="win-hero"><h1>Posts</h1></header>
-    <section class="content">
-      <ul class="listing table">
-        {% for post in site.posts limit: 12 %}
-          <li>
-            <span>{{ post.title }}</span>
-            <time datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: "%b %e, %Y" }}</time>
-          </li>
-        {% endfor %}
-      </ul>
-    </section>
-  </div>
-
-  <div class="window win-post-fg" id="win-post">
+<div class="deskwrap">
+  <div class="window win-post" id="win-main">
     {% assign pname = page.slug | append: '.md' %}
-    {% include titlebar.html file=pname href="/posts/" label="Back to all posts" closable=true %}
+    {% include titlebar.html file=pname href="/" label="Close to home" closable=true %}
 
     <header class="win-hero">
       <span class="eyebrow">Writing · {{ page.date | date: "%b %e, %Y" }}</span>
@@ -38,25 +17,23 @@ layout: body
     </header>
 
     {% if page.image %}
-      <img src="/images/{{ page.image }}" alt="{{ page.image_alt }}" style="width: 100%; margin: 0; border: 0; border-radius: 0">
+      <img src="/images/{{ page.image }}" alt="{{ page.image_alt }}" class="post-banner">
     {% endif %}
 
     <section class="content">
       {{ content }}
 
-      {% comment %}
-        site.posts is newest-first, so `previous` is the newer post. Labelled
-        by direction in time rather than by array order, which reads backwards.
-      {% endcomment %}
       {% include open-heart.html %}
 
+      {% comment %}
+        site.posts is newest-first, so `next` is the newer post. Labelled by
+        direction in time rather than by array order, which reads backwards.
+      {% endcomment %}
       <nav class="prev-next" aria-label="More posts">
         {% if page.next %}<a href="{{ page.next.url }}">&laquo; {{ page.next.title }}</a>{% endif %}
         {% if page.previous %}<a href="{{ page.previous.url }}">{{ page.previous.title }} &raquo;</a>{% endif %}
       </nav>
 
-      {% include footer.html %}
     </section>
   </div>
-
 </div>

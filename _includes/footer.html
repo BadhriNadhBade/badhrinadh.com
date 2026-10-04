@@ -3,6 +3,9 @@
   the page — so these links live at the bottom of the window content instead.
   The separators are decorative, so they're hidden from assistive tech rather
   than announced between every link.
+
+  The credit line sits here rather than only in the colophon: this theme is
+  someone else's idea first, and the attribution belongs where it is read.
 {% endcomment %}
 {% assign lang = include.lang | default: "en-US" %}
 <nav class="sitefoot" aria-label="About this site">
@@ -12,3 +15,10 @@
   <span aria-hidden="true">·</span>
   <a href="https://github.com/BadhriNadhBade/badhrinadh.com">{{ site.i18n[lang].source }}</a>
 </nav>
+
+<p class="sitecredit">
+  Theme after <a href="https://meowni.ca">meowni.ca</a> by Monica Dinculescu
+  (<a href="https://github.com/notwaldorf/notwaldorf.github.com">source</a>);
+  structure after <a href="https://muan.co">muan.co</a> by muan
+  (<a href="https://github.com/muan/site">source</a>). Both MIT licensed.
+</p>

@@ -22,14 +22,10 @@
     {% include nav.html %}
 
     {% comment %}
-      Desk icons. Two of them are shortcuts to real pages; snake.exe is a toy
-      and needs JavaScript, so it is a button rather than a dead link.
+      Desk icons: shortcuts to the parts of the site that aren't the front page.
+      Plain links, so they work without JavaScript.
     {% endcomment %}
     <div class="desk-icons">
-      <a href="/posts/" class="dicon" title="Everything I've written">
-        <span class="glyph glyph-doc" aria-hidden="true"></span>
-        <span class="lbl">posts.md</span>
-      </a>
       <a href="/notes" class="dicon" title="Short notes">
         <span class="glyph glyph-doc" aria-hidden="true"></span>
         <span class="lbl">notes.md</span>
@@ -38,10 +34,6 @@
         <span class="glyph glyph-print" aria-hidden="true"></span>
         <span class="lbl">print.app</span>
       </a>
-      <button type="button" class="dicon" data-snake title="Play snake">
-        <span class="glyph glyph-snake" aria-hidden="true"></span>
-        <span class="lbl">snake.exe</span>
-      </button>
     </div>
 
     <div id="desktop">
@@ -52,6 +44,16 @@
       <main id="main" tabindex="-1">
         {{ content }}
       </main>
+
+      {% comment %}
+        One footer per page, after every window rather than inside the first one.
+        It used to live in the window content, which put the credits and the
+        theme toggle halfway down the home page — and in the classic shell,
+        where the windows stack, plainly in the wrong place.
+      {% endcomment %}
+      <footer class="deskfoot">
+        {% include footer.html %}
+      </footer>
     </div>
 
     <script src="/assets/desk.js" defer></script>

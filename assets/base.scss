@@ -292,9 +292,11 @@ pre code { background: transparent; padding: 0; font-size: inherit; font-weight:
   flex-shrink: 0;
   text-transform: uppercase;
 }
-// year separators inside a listing sit tighter than article h2s
-.listing h2 { font-size: var(--fs-h2); margin: var(--spacing) 0 var(--spacing-xs); }
-.listing li:first-child h2 { margin-top: 0; }
+// Year separators inside a listing sit tighter than article h2s. They are h3
+// on the home page, where the list already sits under an h2, so both levels
+// are styled the same — the difference is document outline, not size.
+.listing h2, .listing h3 { font-size: var(--fs-h2); margin: var(--spacing) 0 var(--spacing-xs); }
+.listing li:first-child :is(h2, h3) { margin-top: 0; }
 
 // the "all posts →" link under a short list
 a.all {
@@ -397,11 +399,11 @@ a.all:hover { text-decoration: underline; }
   font-size: var(--fs-meta);
 }
 
-// site footer, rendered at the bottom of a window's content
+// The page footer. It sits below the windows rather than inside one, so it gets
+// no top border — on the desk there is nothing above it to divide from.
 .sitefoot {
-  margin: var(--spacing-l) 0 0;
-  padding-top: var(--spacing-s);
-  border-top: 1.5px solid var(--hair);
+  margin: 0;
+  padding-top: 0;
   display: flex;
   flex-wrap: wrap;
   gap: var(--spacing-xs) var(--spacing-s);
@@ -410,6 +412,18 @@ a.all:hover { text-decoration: underline; }
 }
 .sitefoot a { color: var(--ink-soft); font-weight: 400; }
 .sitefoot a:hover { color: var(--accent); }
+
+// Credit line. This theme is someone else's idea first, so the attribution sits
+// on every page rather than only in the colophon.
+.sitecredit {
+  max-width: 60ch;
+  margin: var(--spacing-s) 0 0;
+  font-size: 11px;
+  line-height: 1.6;
+  color: var(--ink-faint);
+}
+.sitecredit a { color: var(--ink-soft); font-weight: 400; }
+.sitecredit a:hover { color: var(--accent); }
 
 // ============================================================
 // PRINTER FORM  (the thermal printer on my desk)

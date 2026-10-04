@@ -16,7 +16,6 @@
   <button class="mi menu-toggle" data-menu type="button" aria-expanded="false" aria-controls="mi-group">menu</button>
 
   <nav class="mi-group" id="mi-group" aria-label="Sections">
-    <a class="mi {% if page.path == 'posts.html' or page.collection == 'posts' %}cur{% endif %}" href="/posts/">writing</a>
     <a class="mi {% if page.path == 'notes.html' or page.collection == 'notes' %}cur{% endif %}" href="/notes">notes</a>
     <a class="mi {% if page.path == '_pages/now.md' %}cur{% endif %}" href="{% link _pages/now.md %}">now</a>
     <a class="mi" href="https://devtools.badhrinadh.com/" rel="me">devtools<span class="ext" aria-hidden="true">↗</span></a>
