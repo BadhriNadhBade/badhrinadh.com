@@ -1,0 +1,37 @@
+---
+layout: body
+---
+{% comment %}
+  A single note, in its own small window. Notes are short, so this window is
+  narrower than a post's and the close box goes back to the notes index rather
+  than to the desk.
+{% endcomment %}
+{% assign lang = page.lang | default: "en-US" %}
+
+<div class="deskwrap">
+  <div class="window win-note" id="win-main">
+    {% include titlebar.html file="note.md" href="/notes" label="Back to all notes" closable=true %}
+
+    <header class="win-hero">
+      <span class="eyebrow">Note · {{ page.date | date: "%b %e, %Y" }}</span>
+      <h1><time datetime="{{ page.date | date_to_xmlschema }}">{{ page.date | date: "%H:%M" }}</time></h1>
+      {% if page.location %}<p class="byline">{{ page.location }}</p>{% endif %}
+    </header>
+
+    <section class="content">
+      <div class="note-content" lang="{{ lang }}">{{ content }}</div>
+
+      {% if page.tags %}
+        <div class="note-tags">{% for tag in page.tags %}<span class="note-tag" data-tag="{{ tag }}">{{ tag }}</span>{% endfor %}</div>
+      {% endif %}
+
+      {% include open-heart.html %}
+
+      <p class="linkrow after">
+        <a class="all" href="/notes">all notes &rarr;</a>
+        <a class="all" href="/notes.xml">RSS</a>
+      </p>
+
+    </section>
+  </div>
+</div>

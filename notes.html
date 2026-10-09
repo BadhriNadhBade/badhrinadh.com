@@ -1,22 +1,26 @@
 ---
 title: Notes
-layout: default
+layout: page
 type: static
 header_content: Short thoughts, links, and quotes. Newest first.
 ---
 
-<a href="/notes.xml" class="styled-link">RSS</a>
+<p class="linkrow">
+  <a href="/notes.xml">RSS</a>
+</p>
 
 <ul class="notes">
-{% assign notes = site.notes | reverse %}
-{% for note in notes %}
-  <li class="note" id="N{{ note.date | date: '%Y%m%d%H%M' }}">
-    <time class="general-actions monospace" datetime="{{ note.date | date_to_xmlschema }}">
-      <a href="{{ note.url }}" class="hidden-link">{{ note.date | date: "%Y/%m/%d %H:%M" }}</a>
-      {% if note.location %}<span>{{ note.location }}</span>{% endif %}
-    </time>
-    <div class="note-content" lang="{{ note.lang | default: 'en-US' }}">{{ note.content | markdownify }}</div>
-    <div class="note-tags">{% for tag in note.tags %}<span class="note-tag" data-tag="{{ tag }}">{{ tag }}</span>{% endfor %}</div>
-  </li>
-{% endfor %}
+  {% assign notes = site.notes | reverse %}
+  {% for note in notes %}
+    <li class="note" id="N{{ note.date | date: '%Y%m%d%H%M' }}">
+      <div class="note-meta">
+        <a href="{{ note.url }}"><time datetime="{{ note.date | date_to_xmlschema }}">{{ note.date | date: "%Y/%m/%d %H:%M" }}</time></a>
+        {% if note.location %}<span>{{ note.location }}</span>{% endif %}
+      </div>
+      <div class="note-content" lang="{{ note.lang | default: 'en-US' }}">{{ note.content | markdownify }}</div>
+      {% if note.tags %}
+        <div class="note-tags">{% for tag in note.tags %}<span class="note-tag" data-tag="{{ tag }}">{{ tag }}</span>{% endfor %}</div>
+      {% endif %}
+    </li>
+  {% endfor %}
 </ul>

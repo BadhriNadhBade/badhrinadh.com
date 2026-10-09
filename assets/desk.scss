@@ -1,0 +1,698 @@
+---
+---
+
+// ============================================================
+// desk.scss — the "desk" theme: palette + chrome (menu bar,
+// windows, titlebars, control panel, desk icons, mobile).
+// Loaded AFTER base.scss, which owns type and prose.
+//
+// Adapted from meowni.ca (github.com/notwaldorf/notwaldorf.github.com),
+// MIT licensed. Palette, dark mode, and accent handling are mine.
+//
+// Pairs with assets/desk.js — nothing here needs JavaScript to
+// render; the script only adds dragging, the clock, and the
+// control panel.
+// ============================================================
+
+// libsass — what GitHub Pages compiles with — has its own min()/max() and
+// errors on CSS's version as soon as the arguments carry different units
+// ("Incompatible units: '%' and 'px'"). Passing the CSS form through as a
+// literal is the whole job of this function.
+@function min-w($a, $b) { @return unquote("min(#{$a}, #{$b})"); }
+
+// ============================================================
+// PALETTE
+//
+// Everything lives on :root (not body) so the inline script in
+// <head> can apply a stored theme before the first paint.
+//
+// The accent is split into hue + chroma (chosen by the accent
+// picker) and lightness (chosen by the theme). That is what keeps
+// link contrast at AA in both light and dark without maintaining
+// two colours per accent.
+// ============================================================
+
+:root {
+  // accent: hue + chroma come from the picker, lightness from the theme
+  --accent-h: 162;
+  --accent-c: 0.10;
+  --accent-l: 0.47;
+  --accent-soft-a: 0.14;
+
+  --accent: oklch(var(--accent-l) var(--accent-c) var(--accent-h));
+  --accent-soft: oklch(var(--accent-l) var(--accent-c) var(--accent-h) / var(--accent-soft-a));
+
+  // structural palette — light
+  --desk-bg: oklch(0.93 0.012 90);
+  --dot: oklch(0.45 0.02 85 / 0.20);
+  --paper: oklch(0.99 0.004 95);
+  --paper-2: oklch(0.965 0.006 95);
+  --ink: oklch(0.24 0.012 265);
+  --ink-soft: oklch(0.44 0.012 265);
+  // 0.515, not 0.52: the footer sits on the wallpaper, so this token has to
+  // clear 4.5:1 on --desk-bg as well as on the two paper surfaces. At 0.52 the
+  // wallpaper came to 4.49.
+  --ink-faint: oklch(0.515 0.012 265);
+  --hair: oklch(0.24 0.012 265);
+  --win-shadow: 2px 2px 0 oklch(0.2 0.02 280 / 0.14), 7px 11px 28px oklch(0.2 0.02 280 / 0.16);
+
+  --ok: oklch(0.47 0.13 150);
+  --err: oklch(0.50 0.19 25);
+
+  --wall: radial-gradient(var(--dot) 1.1px, transparent 1.2px);
+  --wall-size: 15px 15px;
+}
+
+// Dark palette. Written once as a mixin-ish block and applied both to the
+// OS preference (when no theme is pinned) and to an explicit Dark choice.
+@mixin dark {
+  --accent-l: 0.80;
+  --accent-soft-a: 0.20;
+
+  --desk-bg: oklch(0.16 0.012 265);
+  --dot: oklch(0.80 0.02 265 / 0.16);
+  --paper: oklch(0.215 0.012 265);
+  --paper-2: oklch(0.265 0.014 265);
+  --ink: oklch(0.94 0.008 265);
+  --ink-soft: oklch(0.77 0.012 265);
+  --ink-faint: oklch(0.66 0.012 265);
+  // 0.57, not 0.52: a border has to clear 3:1 against the surface it sits on,
+  // and the inset surfaces (--paper-2: inputs, code blocks) are the tight case.
+  --hair: oklch(0.57 0.016 265);
+  --win-shadow: 2px 2px 0 oklch(0 0 0 / 0.45), 7px 11px 28px oklch(0 0 0 / 0.40);
+
+  --ok: oklch(0.82 0.16 150);
+  --err: oklch(0.76 0.15 25);
+}
+
+// "Auto" (the default — no data-theme set) follows the operating system.
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) { @include dark; }
+}
+:root[data-theme="dark"] { @include dark; }
+
+// An explicit Light choice has nothing to override: :root already is light.
+
+// ---- accent presets (the swatch row in the control panel) ----
+:root[data-accent="green"]  { --accent-h: 162; --accent-c: 0.10; }
+:root[data-accent="pink"]   { --accent-h: 8;   --accent-c: 0.15; }
+:root[data-accent="blue"]   { --accent-h: 248; --accent-c: 0.13; }
+:root[data-accent="gold"]   { --accent-h: 75;  --accent-c: 0.13; }
+// rainbow drives a solid violet for fills, borders and selection; the >
+// prompts, prose links and the <hr> go full-spectrum in the block below.
+:root[data-accent="rainbow"] { --accent-h: 305; --accent-c: 0.15; }
+
+// ---- retro themes ----
+// Decorative, opt-in, and not persisted between visits. They pin their own
+// accent, so the picker is disabled while one is on.
+:root[data-theme="cga"] {
+  --desk-bg: #000; --dot: rgba(85,255,255,.20);
+  --paper: #000; --paper-2: #101010;
+  --ink: #55ffff; --ink-soft: #d6d6d6; --ink-faint: #a9a9a9;
+  --hair: #ff55ff;
+  --win-shadow: 0 0 0 1px #ff55ff, 6px 6px 0 rgba(255,85,255,.28);
+  --accent: #ff7bff; --accent-soft: rgba(255,85,255,.22); --accent-l: 0.82;
+  --ok: #55ff55; --err: #ff5555;
+}
+:root[data-theme="dos"] {
+  --desk-bg: #0000a8; --dot: rgba(255,255,255,.12);
+  --paper: #0000a8; --paper-2: #0a0ac4;
+  --ink: #e8e8e8; --ink-soft: #9fc7ff; --ink-faint: #8aa9e0;
+  --hair: #54ffff;
+  --win-shadow: 0 0 0 1px #54ffff, 5px 5px 0 rgba(0,0,0,.45);
+  --accent: #ffff54; --accent-soft: rgba(255,255,84,.18); --accent-l: 0.84;
+  --ok: #54ff54; --err: #ff8a8a;
+}
+:root[data-theme="term"] {
+  --desk-bg: #03120a; --dot: rgba(51,255,110,.16);
+  --paper: #05160d; --paper-2: #0a2113;
+  --ink: #3bff77; --ink-soft: #2fdf6a; --ink-faint: #23b454;
+  --hair: #2fdf6a;
+  --win-shadow: 0 0 0 1px rgba(59,255,119,.30), 0 0 22px rgba(40,255,110,.16);
+  --accent: #8dffb4; --accent-soft: rgba(109,255,160,.16); --accent-l: 0.82;
+  --ok: #8dffb4; --err: #ffb86d;
+}
+
+// ---- wallpaper ----
+:root[data-wall="grid"] {
+  --wall: linear-gradient(to right, var(--dot) 1px, transparent 1px),
+          linear-gradient(to bottom, var(--dot) 1px, transparent 1px);
+  --wall-size: 22px 22px;
+}
+:root[data-wall="plain"] { --wall: none; }
+
+// ---- the rainbow accent's full-spectrum flourishes ----
+:root[data-accent="rainbow"] {
+  --rainbow: linear-gradient(90deg, #F79533 0%, #F37055 15%, #EF4E7B 30%, #A166AB 44%, #5073B8 58%, #1098AD 72%, #07B39B 86%, #6DBA82 100%);
+}
+:root[data-accent="rainbow"] {
+  .win-hero h1::before,
+  .content h2::before {
+    background-image: var(--rainbow);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+  }
+  .content hr {
+    height: 5px;
+    background-image: var(--rainbow);
+  }
+}
+
+// ============================================================
+// DESKTOP SURFACE
+// ============================================================
+html { font-size: 16px; }
+
+body {
+  margin: 0;
+  padding: 30px 0 0; // clears the fixed menu bar
+  font-family: var(--mono);
+  font-size: var(--fs-body);
+  color: var(--ink);
+  background-color: var(--desk-bg);
+  background-image: var(--wall);
+  background-size: var(--wall-size);
+  background-attachment: fixed;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+// Skip link — the old layout had none, and the notes index is a long list.
+.skip {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  z-index: 9999;
+
+  &:focus {
+    left: 8px;
+    top: 36px;
+    padding: 8px 12px;
+    background: var(--paper);
+    border: 1.5px solid var(--hair);
+    border-radius: 4px;
+    box-shadow: var(--win-shadow);
+  }
+}
+
+// ============================================================
+// MENU BAR  (_includes/nav.html)
+// ============================================================
+#menubar {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: 30px;
+  z-index: 9000;
+  display: flex;
+  align-items: stretch;
+  padding: 0 6px;
+  background: var(--paper);
+  border-bottom: 1.5px solid var(--hair);
+  overflow-x: auto;
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar { display: none; }
+
+  .mi {
+    display: inline-flex;
+    align-items: center;
+    padding: 0 11px;
+    font-family: var(--mono);
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ink);
+    text-decoration: none;
+    white-space: nowrap;
+    border: none;
+    background: none;
+    cursor: pointer;
+    letter-spacing: 0.1px;
+
+    &:hover, &.cur { background: var(--ink); color: var(--paper); }
+  }
+
+  // the two glyph buttons on the left
+  .mi.star {
+    font-size: 15px;
+    color: var(--accent);
+    &:hover { background: var(--accent); color: var(--paper); }
+  }
+  .mi.home { font-size: 15px; }
+
+  .mi .ext { font-size: 10px; opacity: 0.6; margin-left: 3px; }
+
+  .spacer { flex: 1 0 14px; }
+
+  #clock {
+    display: inline-flex;
+    align-items: center;
+    padding: 0 10px;
+    font-size: 12px;
+    color: var(--ink-soft);
+    cursor: default;
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+  }
+
+  // desktop: section links flow inline; the "menu" toggle is mobile-only
+  .menu-toggle { display: none; }
+  .mi-group { display: contents; }
+}
+
+// The blinking colon in the clock, kept from the old home page.
+.clock-colon { animation: blink 2s steps(1) infinite; }
+@keyframes blink { 0%, 50% { opacity: 1; } 50.01%, 100% { opacity: 0.25; } }
+@media (prefers-reduced-motion: reduce) {
+  .clock-colon { animation: none; }
+}
+
+// ============================================================
+// DESKTOP + WINDOWS
+// ============================================================
+#desktop { min-height: calc(100vh - 30px); }
+
+.deskwrap {
+  display: flex;
+  justify-content: center;
+  padding: clamp(20px, 4vw, 48px) clamp(14px, 4vw, 48px) 72px;
+}
+// stacked wraps (home) read as one desk, not two bands
+.deskwrap + .deskwrap { padding-top: 0; }
+
+.window {
+  width: min-w(840px, 100%);
+  background: var(--paper);
+  border: 1.5px solid var(--hair);
+  border-radius: 6px;
+  box-shadow: var(--win-shadow);
+  overflow: hidden;
+  position: relative;
+  z-index: 6; // windows sit above the desk icons (z-index 5)
+}
+
+.titlebar {
+  height: 30px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 8px;
+  border-bottom: 1.5px solid var(--hair);
+  position: relative;
+  cursor: grab;
+  touch-action: none; // a touch on the titlebar drags the window, not the page
+  background: repeating-linear-gradient(to bottom, var(--hair) 0 1px, transparent 1px 3px);
+
+  &:active { cursor: grabbing; }
+
+  // Title-bar boxes. The spacer is decorative; only .tb-x is clickable.
+  .tb-box {
+    width: 20px; height: 20px;
+    flex: none;
+    border: 1.5px solid var(--hair);
+    background: var(--paper);
+    border-radius: 3px;
+    position: relative;
+    z-index: 2;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    color: var(--ink);
+  }
+  .tb-spacer { visibility: hidden; }
+  .tb-x {
+    cursor: pointer;
+    &:hover { background: var(--accent-soft); color: var(--accent); }
+    svg { display: block; }
+  }
+
+  .ttl {
+    margin: 0 auto;
+    font-size: 12.5px;
+    font-weight: 600;
+    letter-spacing: 0.2px;
+    background: var(--paper);
+    padding: 1px 14px;
+    border-radius: 3px;
+    position: relative;
+    z-index: 1;
+    max-width: 76%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+// an unfocused window dims its title, the way a desktop does
+.window.inactive .titlebar .ttl { color: var(--ink-faint); }
+
+// ---- hero inside a window (terminal prompt style) ----
+// Shares the content box model so its left edge lines up with the body text.
+.win-hero {
+  max-width: var(--content-width);
+  width: 100%;
+  margin: 0 auto;
+  padding: 56px clamp(20px, 5%, 38px) 0;
+
+  .eyebrow { display: block; margin-bottom: 10px; }
+
+  h1 {
+    font-weight: 700;
+    font-size: var(--fs-h1);
+    line-height: 1.1;
+    margin: 0;
+    letter-spacing: -0.5px;
+    color: var(--ink);
+
+    &::before { content: "> "; color: var(--accent); }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+      font-weight: inherit;
+      &:hover { color: var(--accent); background: none; }
+    }
+  }
+
+  .byline {
+    font-size: var(--fs-body);
+    line-height: var(--lh-body);
+    margin: 14px 0 0;
+    max-width: 56ch;
+    color: var(--ink-soft);
+  }
+}
+.win-hero + .content { padding-top: 20px; }
+
+// ============================================================
+// HOME  — three windows, cascaded so they read as movable
+// ============================================================
+.deskwrap-home {
+  flex-wrap: wrap;
+  align-items: flex-start;
+  max-width: 1060px;
+  margin-inline: auto;
+
+  .window { flex: 0 0 auto; }
+}
+.win-about  { width: min-w(560px, 53%); z-index: 7; }
+.win-recent { width: min-w(440px, 45%); margin-left: -46px; margin-top: 40px; z-index: 6; }
+
+// the printer sits in its own wrap below, cascaded up and to the right
+.deskwrap-printer {
+  max-width: 1060px;
+  margin-inline: auto;
+  justify-content: flex-start;
+  padding-left: clamp(14px, 9vw, 110px);
+}
+.win-printer {
+  width: min-w(600px, 100%);
+  margin-top: -22px;
+  z-index: 8;
+}
+
+// the home window's title stays at the shared scale even in a narrow window
+.win-about .win-hero { padding-top: 48px; }
+
+// a note is short — give it a narrower window than a post gets
+.win-note { width: min-w(620px, 100%); }
+
+// a post gets the wide window; its close box goes home
+.win-post { width: min-w(840px, 100%); }
+
+// a post's header image spans the whole window, above the content box
+.post-banner {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin: 0;
+}
+
+// ---- the page footer, sitting on the desk below the windows ----
+.deskfoot {
+  max-width: 1060px;
+  margin-inline: auto;
+  padding: 0 clamp(14px, 4vw, 48px) 40px;
+}
+
+// ============================================================
+// DESK ICONS  (charm)
+//
+// Pinned to the left of the desk only when there is room beside the
+// windows; below that they sit in a row on the desk above the first
+// window, which is also how they behave on a phone. They come before
+// #desktop in the DOM, so that row needs no reordering.
+// ============================================================
+.desk-icons {
+  position: fixed;
+  top: 44px;
+  left: 16px;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  align-items: center;
+
+  a { text-decoration: none; color: var(--ink); }
+}
+
+@media (max-width: 1179px) {
+  .desk-icons {
+    position: static;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 18px;
+    top: auto;
+    left: auto;
+    padding: 14px clamp(10px, 4vw, 48px) 0;
+  }
+}
+
+.dicon {
+  width: 72px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  text-align: center;
+
+  .lbl {
+    font-size: 11px;
+    font-weight: 500;
+    background: var(--desk-bg);
+    padding: 1px 5px;
+    border-radius: 3px;
+  }
+  &:hover .lbl { background: var(--accent-soft); color: var(--accent); }
+
+  .glyph {
+    width: 42px; height: 33px;
+    background: var(--paper);
+    border: 2px solid var(--hair);
+    border-radius: 4px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 1.5px 1.5px 0 oklch(0.2 0.02 280 / 0.18);
+  }
+}
+
+// a document glyph: two ruled lines on a page
+.glyph-doc::before,
+.glyph-doc::after {
+  content: "";
+  position: absolute;
+  left: 8px;
+  height: 2px;
+  background: var(--ink-soft);
+}
+.glyph-doc::before { top: 11px; width: 26px; }
+.glyph-doc::after  { top: 18px; width: 17px; }
+
+// a printer glyph: a slot with a receipt coming out
+.glyph-print::before {
+  content: "";
+  position: absolute;
+  left: 9px; top: 8px;
+  width: 24px; height: 7px;
+  border: 1.5px solid var(--ink-soft);
+  border-radius: 1px;
+}
+.glyph-print::after {
+  content: "";
+  position: absolute;
+  left: 13px; top: 17px;
+  width: 16px; height: 9px;
+  background: var(--paper-2);
+  border: 1.5px solid var(--accent);
+  border-radius: 0 0 2px 2px;
+}
+
+// ============================================================
+// CONTROL PANEL  (✦)
+// ============================================================
+.cp-scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 9500;
+  background: oklch(0.2 0.02 280 / 0);
+  transition: background 0.22s ease;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+
+  &.in { background: oklch(0.2 0.02 280 / 0.28); }
+}
+.cp {
+  margin-top: 48px;
+  width: 300px;
+  max-height: calc(100vh - 72px);
+  overflow-y: auto;
+  background: var(--paper);
+  border: 1.5px solid var(--hair);
+  border-radius: 6px;
+  position: relative;
+  box-shadow: var(--win-shadow);
+  transform: translateY(-8px);
+  opacity: 0;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+
+  .titlebar { cursor: default; position: sticky; top: 0; background-color: var(--paper); }
+}
+.cp-scrim.in .cp { transform: translateY(0); opacity: 1; }
+
+.cp-body { padding: 16px 18px 18px; }
+.cp-group {
+  margin-bottom: 16px;
+
+  // the accent picker only applies to Auto/Light/Dark; retro themes pin theirs
+  &.is-disabled { opacity: 0.4; pointer-events: none; }
+}
+.cp-label {
+  font-size: 10px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  margin-bottom: 8px;
+}
+.cp-sw-row { display: flex; gap: 10px; }
+.cp-sw {
+  width: 26px; height: 26px;
+  border-radius: 50%;
+  border: 1.6px solid var(--hair);
+  cursor: pointer;
+  padding: 0;
+
+  &.on { box-shadow: 0 0 0 2px var(--paper), 0 0 0 3.6px var(--hair); }
+}
+.cp-seg-row { display: flex; }
+.cp-seg {
+  flex: 1;
+  text-align: center;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--ink);
+  border: 1.5px solid var(--hair);
+  background: var(--paper);
+  padding: 6px 4px;
+  cursor: pointer;
+
+  & + & { border-left: none; }
+  &:first-child { border-radius: 5px 0 0 5px; }
+  &:last-child { border-radius: 0 5px 5px 0; }
+  &.on { background: var(--ink); color: var(--paper); }
+}
+.cp-foot {
+  font-size: 10px;
+  color: var(--ink-faint);
+  text-align: center;
+  line-height: 1.5;
+  margin: 0;
+}
+
+// ============================================================
+// MOBILE  (< 760px) — the same desk, just tighter. The menu bar,
+// the dotted wallpaper and real window chrome all stay.
+// ============================================================
+@media (max-width: 759px) {
+  .deskwrap { display: block; padding: 14px 8px 48px; }
+  .deskwrap + .deskwrap { padding-top: 0; }
+
+  // menu bar: only ✦ / ⌂ / menu (+ clock) show; section links move into the dropdown
+  #menubar {
+    padding: 0 4px;
+    overflow: visible;
+
+    .menu-toggle { display: inline-flex; }
+    .mi-group {
+      display: none;
+      position: absolute;
+      top: 100%; left: 4px;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 2px;
+      min-width: 190px;
+      max-height: 78vh;
+      overflow-y: auto;
+      background: var(--paper);
+      border: 1.5px solid var(--hair);
+      border-radius: 0 0 8px 8px;
+      box-shadow: var(--win-shadow);
+      padding: 5px;
+      z-index: 9001;
+
+      &.open { display: flex; }
+      .mi {
+        height: auto;
+        padding: 11px 13px;
+        font-size: 14px;
+        border-radius: 4px;
+        justify-content: flex-start;
+      }
+    }
+  }
+
+  .window { width: 100%; }
+
+  .win-hero { padding: 40px clamp(16px, 5%, 38px) 0; }
+  .win-hero + .content { padding-top: 16px; }
+  .content { padding: 24px clamp(16px, 5%, 38px) 28px; }
+
+  // home: stack the windows, each keeping its own chrome
+  .deskwrap-home { display: flex; flex-direction: column; gap: 14px; max-width: none; }
+  .deskwrap-home .window,
+  .win-about, .win-recent { width: 100%; margin: 0; }
+
+  .deskwrap-printer { padding-left: 8px; padding-right: 8px; max-width: none; }
+  .win-printer { width: 100%; margin: 14px 0 0; }
+
+  // the control panel becomes a bottom sheet on a phone
+  .cp-scrim { align-items: flex-end; }
+  .cp {
+    margin: 0;
+    width: 100%;
+    max-height: 86vh;
+    border-radius: 14px 14px 0 0;
+    transform: translateY(100%);
+  }
+  .cp-scrim.in .cp { transform: translateY(0); }
+}
+
+// page-to-page slide (modern browsers; ignored elsewhere)
+@media (prefers-reduced-motion: no-preference) {
+  ::view-transition-old(root) { animation: vt-out 0.22s ease both; }
+  ::view-transition-new(root) { animation: vt-in 0.26s ease both; }
+}
+@keyframes vt-out { to { opacity: 0; transform: translateX(-3%); } }
+@keyframes vt-in { from { opacity: 0; transform: translateX(4%); } }
+
+// Dragging is a desktop affordance and a pointer-driven one; honour the
+// reduced-motion preference by leaving transforms alone elsewhere.
+@media (prefers-reduced-motion: reduce) {
+  .window, .cp { transition: none; }
+}

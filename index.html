@@ -1,7 +1,10 @@
 ---
 title: Badhri Nadh
-layout: default
+layout: home
 root: true
+splashtitle: Badhri Nadh
+splashbyline: Infrastructure engineer in Dallas. I build small tools, web pages,
+  and a homelab that is usually mid-upgrade.
 # Old photo gallery URLs. The gallery is gone; these send anything still
 # pointing at it here instead of to a 404.
 redirect_from:
@@ -11,10 +14,9 @@ redirect_from:
 ---
 
 <p>
-  Infrastructure engineer. Builds small tools, web pages, and a homelab.
-</p>
-<p>
-  Lives in Dallas. <span class="time" data-timestamp-text="It is currently {time}."></span>
+  Mostly I work on infrastructure: proxies, networks, and the unglamorous
+  plumbing that keeps services up. The clock in the menu bar is my time — if
+  it's late there, I'm probably not reading email.
 </p>
 
 {% comment %}
@@ -30,117 +32,23 @@ redirect_from:
   {% assign last_updated = site.posts.first.date %}
 {% endif %}
 {% if last_updated %}
-<p>
-  Currently writing code, upgrading the homelab, and learning to garden.
-  Last updated {{ last_updated | date: "%b %e, %Y" }}.
-</p>
+  <p>
+    Currently writing code, upgrading the homelab, and learning to garden.
+    Last updated {{ last_updated | date: "%b %e, %Y" }}.
+  </p>
 {% endif %}
 
-<p>
-  Other things I keep online:
-</p>
+<h2>Elsewhere</h2>
 
-<nav aria-label="Projects">
-  <a href="{% link _pages/now.md %}">Now</a><hr class="inline-hr" aria-hidden="true">
-  <a href="https://devtools.badhrinadh.com/" rel="me">DevTools</a>
-  <a href="https://play.badhrinadh.com/" rel="me">Games</a>
-  <a href="https://lab.badhrinadh.com/" rel="me">Sandbox</a>
-  <hr class="inline-hr" aria-hidden="true">
-  <nav aria-label="Social">
-    <a href="https://github.com/BadhriNadhBade" rel="me">GitHub</a>
-  </nav>
-</nav>
-
-<hr class="hr">
-
-<h2 class="normal-heading">Print me a message</h2>
-<span class="print-count monospace" id="print-count" hidden><span id="print-count-n">—</span> printed</span>
+<ul class="sitelinks">
+  <li><a href="{% link _pages/now.md %}">Now</a></li>
+  <li><a href="https://devtools.badhrinadh.com/" rel="me">DevTools<span class="ext" aria-hidden="true">↗</span></a></li>
+  <li><a href="https://play.badhrinadh.com/" rel="me">Games<span class="ext" aria-hidden="true">↗</span></a></li>
+  <li><a href="https://lab.badhrinadh.com/" rel="me">Sandbox<span class="ext" aria-hidden="true">↗</span></a></li>
+  <li><a href="https://github.com/BadhriNadhBade" rel="me">GitHub<span class="ext" aria-hidden="true">↗</span></a></li>
+</ul>
 
 <p class="desc">
-  There's a thermal receipt printer on my desk. Write something and it prints
-  out on real paper, a few feet from where I'm sitting. Attach a photo and that
-  prints too.
+  Drag a title bar to move a window. The ✦ in the menu bar opens a control
+  panel for appearance, accent and wallpaper.
 </p>
-
-<form id="print-form" class="print-form" novalidate>
-  <label class="print-field">
-    <span class="print-label monospace">Name</span>
-    <input type="text" name="name" required autocomplete="name" maxlength="80">
-  </label>
-
-  <label class="print-field">
-    <span class="print-label monospace">Email <span class="print-optional">(optional)</span></span>
-    <input type="email" name="email" autocomplete="email" maxlength="120">
-  </label>
-
-  {% comment %}
-    The character count is wired up with aria-describedby rather than a live
-    region. As a live region it re-announced "1 / 500", "2 / 500" on every
-    single keystroke; described-by means screen readers read it once on focus,
-    and maxlength stops anyone overrunning it regardless.
-  {% endcomment %}
-  <label class="print-field">
-    <span class="print-label monospace">Message</span>
-    <textarea name="message" required rows="4" maxlength="500" aria-describedby="print-remaining"></textarea>
-  </label>
-
-  {% comment %}
-    Optional image. Downscaled and re-encoded to JPEG in the browser, then
-    sent inline as base64 — the server never fetches a URL. accept="image/*"
-    rather than a type list so iOS offers HEIC straight from the camera roll.
-    The camera input is only surfaced on touch devices, where "capture"
-    actually opens a camera.
-  {% endcomment %}
-  <div class="print-attach">
-    <input type="file" id="print-image" accept="image/*" class="print-file">
-    <label for="print-image" class="print-attach-btn monospace">Attach an image</label>
-
-    <input type="file" id="print-camera" accept="image/*" capture="environment" class="print-file">
-    <label for="print-camera" class="print-attach-btn print-attach-btn--camera monospace">Take a photo</label>
-
-    <span class="print-attach-name monospace" id="print-image-name"></span>
-    <button type="button" class="print-attach-clear monospace" id="print-image-clear" hidden>Remove</button>
-  </div>
-
-  {% comment %}
-    Honeypot. Bots fill every field they find; humans never see this one.
-    Kept out of the tab order and hidden from assistive tech.
-  {% endcomment %}
-  <input type="text" name="_trap" tabindex="-1" aria-hidden="true" autocomplete="off" class="print-trap">
-
-  <div class="print-actions">
-    <button type="submit" class="print-button monospace">Print it</button>
-    <span class="print-remaining monospace" id="print-remaining">0 / 500</span>
-  </div>
-
-  <p class="print-status monospace" id="print-status" role="status" aria-live="polite"></p>
-
-  <noscript>
-    <p class="desc">This needs JavaScript — the printer is on the other end of an API.</p>
-  </noscript>
-</form>
-
-<hr class="hr">
-
-{% assign note = site.notes | last %}
-<h2 class="normal-heading">Notes</h2><a href="/notes" class="styled-link">Recent notes</a> <a href="/notes.xml" class="styled-link">RSS</a>
-{% if note %}
-<div class="note">
-  <time class="general-actions monospace">
-    {{ note.date | date: "%b %e, %Y" }}
-  </time>
-  <div class="note-content" lang="{{ note.lang | default: 'en-US' }}">{{ note.content | markdownify }}</div>
-  <div class="note-tags">{% for tag in note.tags %}<span class="note-tag" data-tag="{{ tag }}">{{ tag }}</span>{% endfor %}</div>
-</div>
-{% endif %}
-
-<hr class="hr">
-
-<h2 class="normal-heading">Recent posts</h2><a href="/feed.xml" class="styled-link">RSS</a>
-<ul aria-label="posts" class="terminal">
-{% assign posts = site.posts | where: "feature", 1 %}
-{% for post in posts %}
-  <li class="line"><a href="{{ post.url }}">{{ post.title }}</a><br>
-    <time class="monospace" datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: "%b %e, %Y" }}</time></li>
-{% endfor %}
-</ul>

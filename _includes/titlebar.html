@@ -1,0 +1,18 @@
+{% comment %}
+  A window title bar. Params:
+    file      the filename shown in the middle (e.g. "about.md")
+    closable  pass true to render a working close box
+    href      where the close box goes (default: /)
+    label     accessible name for the close box
+
+  The close box is a real link, so it works without JavaScript: closing a
+  window means navigating back to whatever is "behind" it.
+{% endcomment %}
+<div class="titlebar">
+  <span class="ttl">{{ include.file }}</span>
+  {% if include.closable %}
+    <a class="tb-box tb-x" href="{{ include.href | default: '/' }}" aria-label="{{ include.label | default: 'Close' }}" title="{{ include.label | default: 'Close' }}"><svg viewBox="0 0 16 16" width="9" height="9" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8"/></svg></a>
+  {% else %}
+    <span class="tb-box tb-spacer" aria-hidden="true"></span>
+  {% endif %}
+</div>

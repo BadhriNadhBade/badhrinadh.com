@@ -1,0 +1,607 @@
+---
+---
+
+// ============================================================
+// base.scss — type, tokens, and prose.
+//
+// The desk theme chrome (menu bar, windows, control panel) lives
+// in desk.scss, which is loaded AFTER this file and owns the
+// palette. Everything here reads the palette through custom
+// properties, so it follows whichever theme is active.
+//
+// Structure, layout, and the window metaphor are adapted from
+// meowni.ca (github.com/notwaldorf/notwaldorf.github.com), MIT.
+// ============================================================
+
+// Self-hosted IBM Plex, subsetted the same way Google Fonts serves it, so no
+// request for this page leaves badhrinadh.com. Mono is the interface font for
+// the whole theme; the sans is kept for the few places prose wants it.
+// unicode-range keeps latin-ext off the wire unless a page actually uses it.
+//
+// Files are OFL 1.1 — see assets/fonts/OFL.txt.
+
+$latin: "U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD";
+$latin-ext: "U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF";
+
+// --- IBM Plex Mono: the interface + body face ---
+// Two weights carry the whole theme. The 600 face answers for 500-700, so the
+// menu bar, titlebars and headings share one download.
+
+@font-face {
+  font-family: 'IBM Plex Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/assets/fonts/plex-mono-latin.woff2') format('woff2');
+  unicode-range: #{$latin};
+}
+
+@font-face {
+  font-family: 'IBM Plex Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/assets/fonts/plex-mono-latin-ext.woff2') format('woff2');
+  unicode-range: #{$latin-ext};
+}
+
+@font-face {
+  font-family: 'IBM Plex Mono';
+  font-style: normal;
+  font-weight: 500 700;
+  font-display: swap;
+  src: url('/assets/fonts/plex-mono-600-latin.woff2') format('woff2');
+  unicode-range: #{$latin};
+}
+
+@font-face {
+  font-family: 'IBM Plex Mono';
+  font-style: normal;
+  font-weight: 500 700;
+  font-display: swap;
+  src: url('/assets/fonts/plex-mono-600-latin-ext.woff2') format('woff2');
+  unicode-range: #{$latin-ext};
+}
+
+// --- IBM Plex Sans: kept for italics and long-form emphasis ---
+// A variable face spanning 300-600, so one download covers body and headings.
+
+@font-face {
+  font-family: 'IBM Plex Sans';
+  font-style: normal;
+  font-weight: 300 600;
+  font-display: swap;
+  src: url('/assets/fonts/plex-sans-latin.woff2') format('woff2');
+  unicode-range: #{$latin};
+}
+
+@font-face {
+  font-family: 'IBM Plex Sans';
+  font-style: normal;
+  font-weight: 300 600;
+  font-display: swap;
+  src: url('/assets/fonts/plex-sans-latin-ext.woff2') format('woff2');
+  unicode-range: #{$latin-ext};
+}
+
+@font-face {
+  font-family: 'IBM Plex Sans';
+  font-style: italic;
+  font-weight: 300;
+  font-display: swap;
+  src: url('/assets/fonts/plex-sans-italic-latin.woff2') format('woff2');
+  unicode-range: #{$latin};
+}
+
+@font-face {
+  font-family: 'IBM Plex Sans';
+  font-style: italic;
+  font-weight: 300;
+  font-display: swap;
+  src: url('/assets/fonts/plex-sans-italic-latin-ext.woff2') format('woff2');
+  unicode-range: #{$latin-ext};
+}
+
+// ---- reset ----
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+ul { margin: 0; padding: 0; }
+// buttons don't inherit font-family by default — make them match the page
+button, input, select, textarea { font-family: inherit; }
+
+// ---- design tokens ----
+html {
+  --spacing-xs: 8px;
+  --spacing-s: 12px;
+  --spacing: 24px;
+  --spacing-m: 36px;
+  --spacing-l: 48px;
+
+  // ---- type scale: one body size, two header sizes, one meta size ----
+  --fs-body: 15px;   // every paragraph, byline, intro, list item, blockquote
+  --fs-h1: clamp(26px, 4vw, 34px); // hero + page titles (one definition)
+  --fs-h2: 19px;     // section headers + listing year labels
+  --fs-meta: 13px;   // dates, eyebrows, captions, small UI
+  --lh-body: 1.65;
+
+  --content-width: 700px;
+
+  --mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --sans: 'IBM Plex Sans', system-ui, sans-serif;
+}
+
+// ---- shared inline bits ----
+::selection { background: var(--accent); color: var(--paper); }
+iframe { max-width: 100%; }
+
+// Focus is visible on every interactive thing, in every theme. Deliberately
+// no border-radius here: the outline follows whatever shape the element
+// already has, and forcing one would square off the round accent swatches.
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+// ---- links ----
+a {
+  color: var(--accent);
+  text-decoration: underline;
+  text-decoration-skip-ink: auto;
+  font-weight: 600;
+  transition: color .2s ease-in-out;
+}
+a:hover { background: var(--accent-soft); }
+
+// ============================================================
+// ARTICLE CONTENT  (everything inside <section class="content">)
+// ============================================================
+.content {
+  max-width: var(--content-width);
+  width: 100%;
+  margin: 0 auto;
+  padding: 30px clamp(20px, 5%, 38px) 44px;
+  font-size: var(--fs-body);
+  line-height: var(--lh-body);
+}
+.content p { margin: 0 0 1.4rem; }
+.content > :last-child { margin-bottom: 0; }
+
+.content h1, .content h2, .content h3, .content h4 {
+  font-weight: 700;
+  letter-spacing: -0.3px;
+}
+.content h1 { font-size: var(--fs-h1); margin: var(--spacing-l) 0 var(--spacing); }
+.content h2 { font-size: var(--fs-h2); margin: var(--spacing-l) 0 var(--spacing); }
+.content h3 { font-size: var(--fs-body); margin: var(--spacing-m) 0 var(--spacing-s); }
+.content h4 { font-size: var(--fs-body); margin: var(--spacing) 0 var(--spacing-s); }
+.content h2 code { font-size: inherit; }
+// a heading that opens a window's content has the title bar above it already
+.content > :first-child { margin-top: 0; }
+
+// terminal-style section headers: a > prompt instead of an underline
+.content h2::before {
+  content: "> ";
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.content ul, .content ol { margin-left: var(--spacing); padding: var(--spacing-s) 0; }
+.content li { margin-bottom: var(--spacing-s); margin-left: var(--spacing-s); line-height: 1.6; }
+
+.content img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin: var(--spacing) auto;
+  border: 1.5px solid var(--hair);
+  border-radius: 4px;
+}
+
+// retro <hr>: a centered row of accent dashes (follows the accent)
+.content hr {
+  border: 0;
+  height: 4px;
+  width: clamp(120px, 38%, 230px);
+  margin: var(--spacing-m) auto;
+  background: transparent;
+  background-image: repeating-linear-gradient(90deg, var(--accent) 0 8px, transparent 8px 17px);
+  background-repeat: repeat-x;
+  background-position: center;
+}
+
+blockquote {
+  margin: var(--spacing) 0;
+  padding: 2px 0 2px 20px;
+  border-left: 3px solid var(--accent);
+  font-size: var(--fs-body);
+  line-height: 1.5;
+  color: var(--ink-soft);
+}
+blockquote p { margin: 0 0 0.6rem; }
+blockquote p:last-child { margin-bottom: 0; }
+
+em { font-family: var(--sans); font-style: italic; }
+
+// ---- code ----
+code {
+  background: var(--accent-soft);
+  color: var(--ink);
+  padding: 2px 5px;
+  border-radius: 3px;
+  font-size: 0.9em;
+}
+pre {
+  background: var(--paper-2);
+  outline: 1.5px solid var(--hair);
+  border-radius: 4px;
+  padding: var(--spacing-s);
+  margin: 0 0 var(--spacing);
+  overflow-x: auto;
+  font-size: 0.86em;
+  line-height: 1.5;
+}
+pre code { background: transparent; padding: 0; font-size: inherit; font-weight: 400; }
+
+// ---- meta type ----
+.meta {
+  font-size: var(--fs-meta);
+  color: var(--ink-soft);
+}
+.eyebrow {
+  font-size: var(--fs-meta);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+.desc {
+  font-size: var(--fs-meta);
+  color: var(--ink-soft);
+  line-height: 1.6;
+}
+
+// ============================================================
+// LISTINGS  (posts index, notes index, the home "recent" window)
+// ============================================================
+.listing { margin: 0; padding: 0; }
+.listing li {
+  font-size: var(--fs-body);
+  list-style: none;
+  padding: 5px 0;
+  margin: 0;
+  color: var(--ink);
+}
+.listing.table li {
+  display: flex;
+  flex-direction: row;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--spacing-s);
+}
+.listing a {
+  position: relative;
+  color: var(--ink);
+  text-decoration: none;
+  font-weight: 400;
+}
+.listing a:hover { background: var(--accent-soft); text-decoration: underline; }
+.listing li time {
+  font-size: var(--fs-meta);
+  color: var(--ink-soft);
+  text-align: right;
+  letter-spacing: 1px;
+  flex-shrink: 0;
+  text-transform: uppercase;
+}
+// Year separators inside a listing sit tighter than article h2s. They are h3
+// on the home page, where the list already sits under an h2, so both levels
+// are styled the same — the difference is document outline, not size.
+.listing h2, .listing h3 { font-size: var(--fs-h2); margin: var(--spacing) 0 var(--spacing-xs); }
+.listing li:first-child :is(h2, h3) { margin-top: 0; }
+
+// the "all posts →" link under a short list
+a.all {
+  font-size: var(--fs-meta);
+  color: var(--accent);
+  text-decoration: none;
+  white-space: nowrap;
+}
+a.all:hover { text-decoration: underline; }
+
+// a row of small links (RSS, section jumps)
+.linkrow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--spacing-xs) var(--spacing-s);
+  font-size: var(--fs-meta);
+  margin: 0 0 var(--spacing-s);
+}
+.linkrow a { font-weight: 500; }
+// the same row, when it follows the thing it refers to rather than introducing it
+.linkrow.after { margin: var(--spacing-s) 0 0; }
+
+// ---- the project / social nav on the home window ----
+.sitelinks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-xs);
+  margin: 0 0 var(--spacing-s);
+  padding: 0;
+  list-style: none;
+}
+.sitelinks li { margin: 0; }
+.sitelinks a {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: var(--fs-meta);
+  font-weight: 500;
+  color: var(--ink);
+  text-decoration: none;
+  padding: 5px 10px;
+  border: 1.5px solid var(--hair);
+  border-radius: 4px;
+  background: var(--paper);
+  box-shadow: 1.5px 1.5px 0 var(--hair);
+}
+.sitelinks a:hover { background: var(--accent-soft); color: var(--accent); }
+.sitelinks a:active { transform: translate(1.5px, 1.5px); box-shadow: none; }
+.sitelinks .ext { font-size: 10px; opacity: 0.6; }
+
+// ============================================================
+// NOTES
+// ============================================================
+.notes { margin: 0; padding: 0; list-style: none; }
+.note {
+  list-style: none;
+  margin: 0 0 var(--spacing-m);
+  padding: 0;
+}
+.note:last-child { margin-bottom: 0; }
+.note-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--spacing-xs);
+  font-size: var(--fs-meta);
+  color: var(--ink-soft);
+  margin-bottom: 6px;
+}
+.note-meta a { color: var(--ink-soft); font-weight: 400; text-decoration: none; }
+.note-meta a:hover { color: var(--accent); text-decoration: underline; }
+.note-content > :last-child { margin-bottom: 0; }
+.note-content p { margin: 0 0 0.8rem; }
+
+.note-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: var(--spacing-xs);
+}
+.note-tag {
+  font-size: 11px;
+  color: var(--ink-soft);
+  border: 1.5px solid var(--hair);
+  border-radius: 3px;
+  padding: 1px 6px;
+}
+.note-tag::before { content: "#"; opacity: 0.5; }
+
+// ============================================================
+// POST FOOTER
+// ============================================================
+.prev-next {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: var(--spacing);
+  padding: var(--spacing-l) 0 0;
+  font-size: var(--fs-meta);
+}
+
+// The page footer. It sits below the windows rather than inside one, so it gets
+// no top border — on the desk there is nothing above it to divide from.
+.sitefoot {
+  margin: 0;
+  padding-top: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-xs) var(--spacing-s);
+  font-size: var(--fs-meta);
+  color: var(--ink-faint);
+}
+.sitefoot a { color: var(--ink-soft); font-weight: 400; }
+.sitefoot a:hover { color: var(--accent); }
+
+// Credit line. This theme is someone else's idea first, so the attribution sits
+// on every page rather than only in the colophon.
+.sitecredit {
+  max-width: 60ch;
+  margin: var(--spacing-s) 0 0;
+  font-size: 11px;
+  line-height: 1.6;
+  color: var(--ink-faint);
+}
+.sitecredit a { color: var(--ink-soft); font-weight: 400; }
+.sitecredit a:hover { color: var(--accent); }
+
+// ============================================================
+// PRINTER FORM  (the thermal printer on my desk)
+// Built from the palette variables, so it follows every theme.
+// ============================================================
+.print-count {
+  font-size: var(--fs-meta);
+  color: var(--ink-soft);
+}
+
+.print-form {
+  margin: var(--spacing) 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-s);
+}
+
+.print-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.print-label {
+  font-size: var(--fs-meta);
+  color: var(--ink-soft);
+}
+
+.print-optional { color: var(--ink-faint); }
+
+.print-form input[type="text"],
+.print-form input[type="email"],
+.print-form textarea {
+  font-family: var(--mono);
+  font-size: var(--fs-body);
+  color: var(--ink);
+  background: var(--paper-2);
+  border: 1.5px solid var(--hair);
+  border-radius: 4px;
+  padding: 7px 10px;
+  width: 100%;
+
+  &::placeholder { color: var(--ink-faint); }
+}
+
+.print-form textarea {
+  resize: vertical;
+  min-height: 5em;
+  line-height: 1.5;
+}
+
+// Honeypot: off-screen rather than display:none, since some bots skip
+// hidden fields but not positioned ones.
+.print-trap {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+}
+
+.print-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-s);
+  flex-wrap: wrap;
+}
+
+// A chunky pressable key, matching the window chrome.
+.print-button {
+  font-size: var(--fs-meta);
+  font-weight: 600;
+  color: var(--ink);
+  background: var(--paper);
+  border: 1.5px solid var(--hair);
+  border-radius: 4px;
+  padding: 8px 16px;
+  cursor: pointer;
+  box-shadow: 1.5px 1.5px 0 var(--hair);
+
+  &:hover:not(:disabled) { background: var(--accent-soft); color: var(--accent); }
+  &:active:not(:disabled) { transform: translate(1.5px, 1.5px); box-shadow: none; }
+
+  &:disabled {
+    opacity: .5;
+    cursor: default;
+    box-shadow: none;
+  }
+}
+
+.print-remaining {
+  font-size: var(--fs-meta);
+  color: var(--ink-soft);
+}
+
+// Success and failure carry a glyph as well as a colour — the accessibility
+// statement promises colour is never the only signal.
+.print-status {
+  font-size: var(--fs-meta);
+  margin: 0;
+  min-height: 1.2em;
+
+  &:empty { display: none; }
+
+  &[data-kind]:before { padding-right: .5em; }
+
+  &[data-kind="ok"] {
+    color: var(--ok);
+    &:before { content: '✓'; }
+  }
+
+  &[data-kind="err"] {
+    color: var(--err);
+    &:before { content: '✕'; }
+  }
+}
+
+// Image attachment. The file inputs are visually hidden and driven by their
+// labels, which is the only way to style a file picker consistently.
+.print-attach {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  flex-wrap: wrap;
+}
+
+.print-file {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+
+  // The label is the visible control, so the focus ring has to be drawn
+  // from the input's focus state or keyboard users get nothing.
+  &:focus-visible + .print-attach-btn {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+}
+
+.print-attach-btn {
+  font-size: var(--fs-meta);
+  color: var(--ink-soft);
+  background: var(--paper-2);
+  border: 1.5px solid var(--hair);
+  border-radius: 4px;
+  padding: 6px 11px;
+  cursor: pointer;
+
+  &:hover { color: var(--accent); background: var(--accent-soft); }
+}
+
+// "capture" only opens a camera on touch devices; on a desktop it just
+// opens another file picker, so the button is pointless there.
+.print-attach-btn--camera { display: none; }
+
+@media (pointer: coarse) {
+  .print-attach-btn--camera { display: inline-block; }
+}
+
+.print-attach-name {
+  font-size: var(--fs-meta);
+  color: var(--ink-soft);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 14em;
+}
+
+.print-attach-clear {
+  font-size: var(--fs-meta);
+  color: var(--ink-soft);
+  background: transparent;
+  border: 0;
+  padding: 3px;
+  cursor: pointer;
+  text-decoration: underline;
+
+  &:hover { color: var(--ink); }
+}

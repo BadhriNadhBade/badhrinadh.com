@@ -1,6 +1,5 @@
 ---
 title: Now
-layout: default
 type: static
 header_content: What I'm focused on at the moment.
 ---
