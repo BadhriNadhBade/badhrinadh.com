@@ -34,8 +34,8 @@
   base.css owns type and prose; desk.css owns the palette and the window chrome
   and must come second.
 {% endcomment %}
-<link href="/assets/base.css" rel="stylesheet" type="text/css">
-<link href="/assets/desk.css" rel="stylesheet" type="text/css">
+<link href="/assets/base.css?v={{ site.time | date: '%s' }}" rel="stylesheet" type="text/css">
+<link href="/assets/desk.css?v={{ site.time | date: '%s' }}" rel="stylesheet" type="text/css">
 {% if page.collection == "posts" %}
   <link href="/assets/syntax.css" rel="stylesheet" type="text/css">
 {% endif %}
