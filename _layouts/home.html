@@ -2,12 +2,12 @@
 layout: body
 ---
 {% comment %}
-  The desk. Three windows, cascaded so they read as things you could pick up
-  and move — which, with JavaScript, you can: drag any title bar.
+  The desk. Three windows that read as things you could pick up and move —
+  which, with JavaScript, you can: drag any title bar.
 
-  about.md   the page content (index.html)
-  recent.md  newest posts and the newest note
-  print.app  the receipt printer
+  about.md   the page content (index.html)       — top row, left
+  print.app  the receipt printer                  — top row, right
+  recent.md  newest posts and the newest note     — below, centred
 {% endcomment %}
 <div class="deskwrap deskwrap-home">
 
@@ -24,6 +24,17 @@ layout: body
     </section>
   </div>
 
+  <div class="window win-printer" id="win-printer">
+    {% include titlebar.html file="print.app" %}
+    <section class="content">
+      <h2>Print me a message</h2>
+      <p class="print-count" id="print-count" hidden><span id="print-count-n">—</span> printed</p>
+      {% include printer.html %}
+    </section>
+  </div>
+</div>
+
+<div class="deskwrap deskwrap-recent">
   <div class="window win-recent" id="win-recent">
     {% include titlebar.html file="recent.md" %}
     <section class="content">
@@ -72,18 +83,6 @@ layout: body
         <a class="all" href="/notes">all notes &rarr;</a>
         <a class="all" href="/notes.xml">RSS</a>
       </p>
-    </section>
-  </div>
-
-</div>
-
-<div class="deskwrap deskwrap-printer">
-  <div class="window win-printer" id="win-printer">
-    {% include titlebar.html file="print.app" %}
-    <section class="content">
-      <h2>Print me a message</h2>
-      <p class="print-count" id="print-count" hidden><span id="print-count-n">—</span> printed</p>
-      {% include printer.html %}
     </section>
   </div>
 </div>

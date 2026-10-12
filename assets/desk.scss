@@ -387,30 +387,28 @@ body {
 .win-hero + .content { padding-top: 20px; }
 
 // ============================================================
-// HOME  — three windows, cascaded so they read as movable
+// HOME  — about.md and print.app side by side, recent.md below
 // ============================================================
 .deskwrap-home {
-  flex-wrap: wrap;
   align-items: flex-start;
+  gap: 18px;
   max-width: 1060px;
   margin-inline: auto;
 
   .window { flex: 0 0 auto; }
 }
-.win-about  { width: min-w(560px, 53%); z-index: 7; }
-.win-recent { width: min-w(440px, 45%); margin-left: -46px; margin-top: 40px; z-index: 6; }
+.win-about   { width: calc(47% - 9px); z-index: 7; }
+.win-printer { width: calc(53% - 9px); margin-top: 6px; z-index: 8; }
 
-// the printer sits in its own wrap below, cascaded up and to the right
-.deskwrap-printer {
+// recent.md sits in its own wrap below, centred under the pair
+.deskwrap-recent {
   max-width: 1060px;
   margin-inline: auto;
-  justify-content: flex-start;
-  padding-left: clamp(14px, 9vw, 110px);
 }
-.win-printer {
-  width: min-w(600px, 100%);
+.win-recent {
+  width: min-w(540px, 100%);
   margin-top: -22px;
-  z-index: 8;
+  z-index: 6;
 }
 
 // the home window's title stays at the shared scale even in a narrow window
@@ -666,10 +664,10 @@ body {
   // home: stack the windows, each keeping its own chrome
   .deskwrap-home { display: flex; flex-direction: column; gap: 14px; max-width: none; }
   .deskwrap-home .window,
-  .win-about, .win-recent { width: 100%; margin: 0; }
+  .win-about, .win-printer { width: 100%; margin: 0; }
 
-  .deskwrap-printer { padding-left: 8px; padding-right: 8px; max-width: none; }
-  .win-printer { width: 100%; margin: 14px 0 0; }
+  .deskwrap-recent { padding-left: 8px; padding-right: 8px; max-width: none; }
+  .win-recent { width: 100%; margin: 14px 0 0; }
 
   // the control panel becomes a bottom sheet on a phone
   .cp-scrim { align-items: flex-end; }
