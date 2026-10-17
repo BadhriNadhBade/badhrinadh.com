@@ -31,4 +31,4 @@ An accent is stored as a hue, not as a colour. Lightness comes from whichever pa
 
 Almost none, and nothing you need. The script adds dragging to the window title bars, the clock in the menu bar, and the control panel. The printer form needs it, because the printer is on the other end of an API. Everything else — every page, post, note, listing, and the navigation — is HTML and CSS. With scripting off you get a static desk, which is still a readable site.
 
-The one script this site does not serve itself is the like button on posts and notes, which loads a custom element from a CDN. It is off unless `open_heart_endpoint` is set in the config, and it is unset.
+Every script here is served from this domain, and so are the fonts. No page loads anything from a third-party CDN, so reading this site makes no request to anyone but me.

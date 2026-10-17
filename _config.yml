@@ -46,10 +46,6 @@ i18n:
     source: View source
     colophon: Colophon
     now: Now
-# OpenHeart endpoint for the like button. Until you point this at your own
-# instance (https://github.com/dddddddddzzzz/OpenHeart), the button renders
-# but records nothing.
-open_heart_endpoint: ""
 
 markdown: CommonMarkGhPages
 commonmark:

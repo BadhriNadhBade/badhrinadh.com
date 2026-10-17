@@ -32,7 +32,6 @@ const tagList = (tags || '')
 const filePath = path.join(notesDir, `${date}-${a}${a}.md`)
 const frontmatter = [
   'title: Note',
-  'open_heart: true',
   `date: ${datetime}`,
   location ? `location: ${location}` : 'location: null',
   tagList.length ? `tags: ${tagList.map(t => `\n  - ${t}`).join('')}` : 'tags: []',
