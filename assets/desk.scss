@@ -61,6 +61,13 @@
 
   --wall: radial-gradient(var(--dot) 1.1px, transparent 1.2px);
   --wall-size: 15px 15px;
+
+  // Which of the browser's own palettes to draw native bits in — scrollbars,
+  // the printer's inputs and textarea, the canvas behind the page. "light
+  // dark" on Auto lets it follow the OS, the same way the dark block below
+  // does; every pinned theme narrows it to the one it actually is. Without
+  // this a dark page got bright white form fields and scrollbars.
+  color-scheme: light dark;
 }
 
 // Dark palette. Written once as a mixin-ish block and applied both to the
@@ -86,12 +93,16 @@
 }
 
 // "Auto" (the default — no data-theme set) follows the operating system.
+// No color-scheme here: :root's "light dark" already follows the OS on its own.
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme]) { @include dark; }
 }
-:root[data-theme="dark"] { @include dark; }
+:root[data-theme="dark"] { @include dark; color-scheme: dark; }
 
-// An explicit Light choice has nothing to override: :root already is light.
+// An explicit Light choice has no palette to override — :root already is
+// light — but it does have to stop the browser drawing dark controls on a
+// light page when the OS is in dark mode.
+:root[data-theme="light"] { color-scheme: light; }
 
 // ---- accent presets (the swatch row in the control panel) ----
 :root[data-accent="green"]  { --accent-h: 162; --accent-c: 0.10; }
@@ -105,6 +116,13 @@
 // ---- retro themes ----
 // Decorative, opt-in, and not persisted between visits. They pin their own
 // accent, so the picker is disabled while one is on.
+//
+// All three are light-on-dark (black, DOS blue, phosphor green), so all three
+// want the browser's dark scrollbars and form controls.
+:root[data-theme="cga"],
+:root[data-theme="dos"],
+:root[data-theme="term"] { color-scheme: dark; }
+
 :root[data-theme="cga"] {
   --desk-bg: #000; --dot: rgba(85,255,255,.20);
   --paper: #000; --paper-2: #101010;
@@ -535,36 +553,48 @@ body {
 
 // ============================================================
 // CONTROL PANEL  (✦)
+//
+// A native <dialog> opened with showModal(), so the browser does the
+// focus trapping, the inertness of the page behind and Escape. It used to
+// be a div inside a div scrim, which looked the same and trapped nothing.
+//
+// The scrim is now the dialog's ::backdrop, and `.in` sits on the dialog
+// itself: desk.js adds it just after showModal() and removes it before
+// closing, and both the panel and its backdrop transition off that.
 // ============================================================
-.cp-scrim {
-  position: fixed;
-  inset: 0;
-  z-index: 9500;
-  background: oklch(0.2 0.02 280 / 0);
-  transition: background 0.22s ease;
-  display: flex;
-  align-items: flex-start;
-  justify-content: center;
-
-  &.in { background: oklch(0.2 0.02 280 / 0.28); }
-}
 .cp {
-  margin-top: 48px;
+  // undo the UA's dialog box: its padding, border, colours and the
+  // max-width/height that would otherwise clip the phone's bottom sheet.
+  // Position is left alone — the UA's fixed, inset: 0, top-layer placement
+  // is exactly what the scrim's flexbox used to do, steered by margins below.
+  padding: 0;
+  color: var(--ink);
+  max-width: none;
+
+  // `auto` everywhere but the top: centred across, pinned 48px down
+  margin: 48px auto auto;
   width: 300px;
   max-height: calc(100vh - 72px);
   overflow-y: auto;
   background: var(--paper);
   border: 1.5px solid var(--hair);
   border-radius: 6px;
-  position: relative;
   box-shadow: var(--win-shadow);
   transform: translateY(-8px);
   opacity: 0;
   transition: transform 0.2s ease, opacity 0.2s ease;
 
   .titlebar { cursor: default; position: sticky; top: 0; background-color: var(--paper); }
+
+  // A literal colour rather than a token on purpose: ::backdrop doesn't
+  // inherit custom properties in every browser still in use.
+  &::backdrop {
+    background: oklch(0.2 0.02 280 / 0);
+    transition: background 0.22s ease;
+  }
+  &.in::backdrop { background: oklch(0.2 0.02 280 / 0.28); }
 }
-.cp-scrim.in .cp { transform: translateY(0); opacity: 1; }
+.cp.in { transform: translateY(0); opacity: 1; }
 
 .cp-body { padding: 16px 18px 18px; }
 .cp-group {
@@ -572,6 +602,18 @@ body {
 
   // the accent picker only applies to Auto/Light/Dark; retro themes pin theirs
   &.is-disabled { opacity: 0.4; pointer-events: none; }
+}
+// Theme swaps the whole site; every row under it only tunes this desk. The
+// rule says so — it's the one setting that leaves the page.
+.cp-shell {
+  padding-bottom: 16px;
+  border-bottom: 1.5px dashed var(--hair);
+}
+.cp-note {
+  font-size: 10px;
+  color: var(--ink-faint);
+  line-height: 1.5;
+  margin: 8px 0 0;
 }
 .cp-label {
   font-size: 10px;
@@ -671,16 +713,16 @@ body {
   .deskwrap-printer { padding-left: 8px; padding-right: 8px; max-width: none; }
   .win-printer { width: 100%; margin: 14px 0 0; }
 
-  // the control panel becomes a bottom sheet on a phone
-  .cp-scrim { align-items: flex-end; }
+  // the control panel becomes a bottom sheet on a phone: an auto top margin
+  // pushes it down against the bottom edge
   .cp {
-    margin: 0;
+    margin: auto 0 0;
     width: 100%;
     max-height: 86vh;
     border-radius: 14px 14px 0 0;
     transform: translateY(100%);
   }
-  .cp-scrim.in .cp { transform: translateY(0); }
+  .cp.in { transform: translateY(0); }
 }
 
 // page-to-page slide (modern browsers; ignored elsewhere)

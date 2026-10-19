@@ -40,13 +40,71 @@
   <link href="/assets/syntax.css" rel="stylesheet" type="text/css">
 {% endif %}
 
+{% comment %}
+  color-scheme tells the browser which of its own palettes to use for the
+  canvas, scrollbars and native form controls before desk.css has said
+  anything. desk.scss sets the same property per theme, and the property
+  wins over this meta, so a pinned Light or Dark still gets its own controls.
+
+  The two theme-colors are the desk background (--desk-bg) in each palette,
+  converted to hex, and they are what you get with JavaScript off, or on Auto.
+  Pick Light, Dark or a retro palette and desk.js overwrites both with the
+  background actually on screen, then puts these values back when you return
+  to Auto — so keep them here, in the markup, rather than moving them into
+  the script. (The dark one used to be #17181c, which is --paper, so a pinned
+  Dark, which reads the real --desk-bg, came out a shade darker than Auto.)
+{% endcomment %}
+<meta name="color-scheme" content="light dark">
 <meta name="theme-color" content="#ebe8e1" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#17181c" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#0b0d13" media="(prefers-color-scheme: dark)">
 
 {% comment %}
-  Applies a stored appearance, accent and wallpaper before the first paint, so
-  choosing Dark doesn't flash a light page on every navigation. Deliberately
-  inline and deliberately tiny; the allowed values mirror assets/desk.js.
+  Where this page's Classic twin lives, for desk.js: the Theme row in the
+  control panel goes there when you pick Classic. A meta rather than a
+  data-classic-url on <html> because <html> is in the layout, which isn't
+  this include's to edit, and because a page with no twin should carry no
+  hook at all rather than an empty one — desk.js reads "no meta" as "go to
+  /classic/". The inline script below doesn't read this: it gets
+  the same value straight from Liquid, without waiting on the DOM.
+{% endcomment %}
+{% if page.classic_url %}
+  <meta name="classic-url" content="{{ page.classic_url | xml_escape }}">
+{% endif %}
+
+{% comment %}
+  First, the theme. Choosing Classic in the control panel is remembered
+  (desk.shell = classic), and every later visit to a Desk page that has a
+  Classic copy is sent on to it here, before anything paints — with replace(),
+  so Back doesn't land you on a Desk page that only bounces you forward again.
+
+  Only two things change that choice: the panel, and the ✦ in Classic's
+  corner, which links to the Desk page with ?shell=desk. That param is stored
+  and then removed from the address bar (other params and the hash kept), so
+  it doesn't end up in bookmarks or copied links. Opening a /classic/ link
+  directly changes nothing: Classic runs none of our JavaScript, so someone
+  sent a Classic link still gets Desk on their next Desk visit, unless they
+  picked Classic themselves.
+
+  It can't loop. The redirect needs page.classic_url, which the plugin only
+  gives Desk pages that have a copy, and it's refused if the target isn't
+  under /classic/ or if we're already there. The 404 does have a copy: an
+  unknown /foo is served the Desk 404, which sends Classic readers on to
+  /classic/404 (a real file); an unknown /classic/x is served the Desk 404 at
+  that path, and the already-there check stops it. ?shell=desk wins outright, so
+  Classic's ✦ always lands on Desk even when the store still says Classic.
+
+  Then it applies a stored appearance, accent and wallpaper before the first
+  paint, so choosing Dark doesn't flash a light page on every navigation.
+  Deliberately inline and deliberately tiny.
+
+  The allowed values and the defaults come from _data/desk.yml, the same file
+  assets/desk.js is built from, so the two can't drift apart: a value one of
+  them accepts is a value the other accepts. jsonify emits them as JS literals.
+  'auto' stays spelled out below because it isn't a list entry so much as a
+  meaning — no data-theme at all, so desk.scss follows the OS.
+
+  The browser toolbar colour isn't touched here (there's no <body> to read the
+  background from yet); desk.js syncs it as soon as the page is parsed.
 {% endcomment %}
 <script>
   (function () {
@@ -56,21 +114,44 @@
         var v = localStorage.getItem('desk.' + key);
         return allowed.indexOf(v) > -1 ? v : fallback;
       };
-      var appearance = pick('appearance', ['auto', 'light', 'dark'], 'auto');
+
+      var classicUrl = {{ page.classic_url | jsonify }};
+      var url = new URL(location.href);
+      if (url.searchParams.get('shell') === 'desk') {
+        // its own try: old Safari's private mode reads fine but throws on
+        // every write, and that mustn't cost the appearance below
+        // If the write fails (storage full), drop a stored Classic rather than
+        // leave it bouncing every later Desk visit back to Classic.
+        try { localStorage.setItem('desk.shell', 'desk'); } catch (e) { try { localStorage.removeItem('desk.shell'); } catch (e2) {} }
+        url.searchParams.delete('shell');
+        history.replaceState(history.state, '', url.pathname + url.search + url.hash);
+      } else if (
+        typeof classicUrl === 'string' &&
+        /^\/classic(\/|$)/.test(classicUrl) &&
+        !/^\/classic(\/|$)/.test(location.pathname) &&
+        pick('shell', {{ site.data.desk.shells | map: "id" | jsonify }}, {{ site.data.desk.defaults.shell | jsonify }}) === 'classic'
+      ) {
+        location.replace(classicUrl + location.search + location.hash);
+        // carry on regardless: the rest is cheap, and should the navigation
+        // not happen, this page still gets its palette
+      }
+
+      var appearance = pick('appearance', {{ site.data.desk.appearances | map: "id" | jsonify }}, {{ site.data.desk.defaults.appearance | jsonify }});
       if (appearance !== 'auto') d.dataset.theme = appearance;
-      d.dataset.accent = pick('accent', ['green', 'pink', 'blue', 'gold', 'rainbow'], 'green');
-      d.dataset.wall = pick('wall', ['dots', 'grid', 'plain'], 'dots');
+      d.dataset.accent = pick('accent', {{ site.data.desk.accents | map: "id" | jsonify }}, {{ site.data.desk.defaults.accent | jsonify }});
+      d.dataset.wall = pick('wall', {{ site.data.desk.walls | map: "id" | jsonify }}, {{ site.data.desk.defaults.wall | jsonify }});
     } catch (e) { /* private mode, or storage disabled — the defaults stand */ }
   })();
 </script>
 
 {% comment %}
   Share card. Everything shares one 1200x630 image (assets/og.png) unless a
-  post names its own in front matter, so the dimensions and alt text below are
-  only emitted for the default.
+  post names its own in front matter — a filename under assets/images/, the
+  same place the post's banner is read from — so the dimensions and alt text
+  below are only emitted for the default.
 {% endcomment %}
 {% if page.image %}
-  {% assign share_image = site.url | append: "/images/" | append: page.image %}
+  {% assign share_image = site.url | append: "/assets/images/" | append: page.image %}
 {% else %}
   {% assign share_image = site.url | append: "/assets/og.png" %}
 {% endif %}

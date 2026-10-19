@@ -1,0 +1,30 @@
+/* Syntax highlighting for fenced code blocks in posts.
+   Colours are drawn from the site palette in new.scss so light/dark follow
+   prefers-color-scheme automatically. */
+
+pre.highlight,
+div.highlight pre {
+  background: var(--subtleBackgroundColor);
+  padding: 1em;
+  border-radius: 0.4em;
+  overflow-x: auto;
+  line-height: 1.5;
+}
+
+.highlight .c, .highlight .c1, .highlight .cm, .highlight .cs { color: var(--mutedTextColor); font-style: italic; }
+.highlight .k, .highlight .kd, .highlight .kn, .highlight .kp, .highlight .kr, .highlight .kt { color: var(--linkColor); font-weight: 600; }
+.highlight .s, .highlight .s1, .highlight .s2, .highlight .sb, .highlight .sc, .highlight .sd, .highlight .se, .highlight .sh, .highlight .si, .highlight .sx, .highlight .sr { color: #3f8f3f; }
+.highlight .m, .highlight .mf, .highlight .mh, .highlight .mi, .highlight .mo, .highlight .il { color: #8a5cd6; }
+.highlight .n, .highlight .na, .highlight .nb, .highlight .nc, .highlight .nd, .highlight .nf, .highlight .ni, .highlight .nl, .highlight .nn, .highlight .nt, .highlight .nv { color: var(--textColor); }
+.highlight .o, .highlight .ow { color: var(--secondaryTextColor); }
+.highlight .p { color: var(--mutedTextColor); }
+.highlight .err { color: #c0392b; }
+.highlight .gd { color: #c0392b; }
+.highlight .gi { color: #3f8f3f; }
+
+@media (prefers-color-scheme: dark) {
+  .highlight .s, .highlight .s1, .highlight .s2, .highlight .sb, .highlight .sc, .highlight .sd, .highlight .se, .highlight .sh, .highlight .si, .highlight .sx, .highlight .sr { color: #8fd48f; }
+  .highlight .m, .highlight .mf, .highlight .mh, .highlight .mi, .highlight .mo, .highlight .il { color: #c9a4f5; }
+  .highlight .err, .highlight .gd { color: #ff8577; }
+  .highlight .gi { color: #8fd48f; }
+}

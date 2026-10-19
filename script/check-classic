@@ -1,0 +1,88 @@
+#!/usr/bin/env bash
+#
+# Checks a built site for the promise _plugins/classic.rb makes: every Desk
+# page has an untouched Classic twin at /classic/<same path>, and Classic
+# stays out of the sitemap. Run by .github/workflows/pages.yml after
+# `jekyll build`, so a broken plugin fails the build instead of quietly
+# shipping a Desk page whose "switch to Classic" goes to a 404.
+#
+#   script/check-classic [site-dir]     (default: _site)
+#
+# Exits non-zero, listing every problem, if anything is off.
+
+set -euo pipefail
+
+site="${1:-_site}"
+status=0
+
+fail() {
+  echo "check-classic: $*" >&2
+  status=1
+}
+
+if [ ! -d "$site" ]; then
+  echo "check-classic: no built site at '$site' — run jekyll build first" >&2
+  exit 1
+fi
+
+if [ ! -f "$site/classic/index.html" ]; then
+  fail "no $site/classic/index.html — the Classic plugin didn't run at all"
+fi
+
+# Every Desk HTML page needs a Classic counterpart at the same relative path.
+# Left out: Classic itself, assets, and jekyll-redirect-from's stubs (pages
+# whose whole job is a meta refresh — the plugin deliberately doesn't copy
+# those). -print0 and read -d '' so an odd filename can't split the list.
+checked=0
+while IFS= read -r -d '' file; do
+  rel="${file#"$site"/}"
+  if grep -qi 'http-equiv="refresh"' "$file"; then
+    continue
+  fi
+  checked=$((checked + 1))
+  if [ ! -f "$site/classic/$rel" ]; then
+    fail "$rel has no Classic copy at classic/$rel"
+  fi
+done < <(find "$site" -type f -name '*.html' \
+  -not -path "$site/classic/*" \
+  -not -path "$site/assets/*" \
+  -print0)
+
+if [ "$checked" -eq 0 ]; then
+  fail "found no Desk pages in $site at all"
+fi
+
+# Every Classic page should have been through the post-render hook, which is
+# what adds the way back to Desk. Its absence means the hook didn't fire and
+# the links on that page still point out of /classic/.
+while IFS= read -r -d '' file; do
+  if ! grep -q 'class="classic-to-desk"' "$file"; then
+    fail "${file#"$site"/} is missing the switch-back link (post-render hook didn't run)"
+  fi
+done < <(find "$site/classic" -type f -name '*.html' -print0 2>/dev/null)
+
+# Classic copies are duplicates; only the Desk originals belong in the sitemap.
+if [ ! -f "$site/sitemap.xml" ]; then
+  fail "no sitemap.xml"
+elif grep -q '/classic/' "$site/sitemap.xml"; then
+  fail "sitemap.xml lists Classic pages:"
+  grep -o '<loc>[^<]*/classic/[^<]*</loc>' "$site/sitemap.xml" >&2 || true
+fi
+
+# Files that go through Liquid but must not be wrapped in a layout. A layout
+# default that matches them turns the script or feed into an HTML page, which
+# the browser or feed reader then can't use — and nothing else would notice.
+for f in assets/desk.js feed.xml notes.xml; do
+  if [ ! -f "$site/$f" ]; then
+    fail "$f is missing"
+  elif [ "$(head -c 1 "$site/$f")" = "<" ] && [ "$f" = "assets/desk.js" ]; then
+    fail "$f was wrapped in an HTML layout"
+  elif [ "$f" != "assets/desk.js" ] && ! head -c 5 "$site/$f" | grep -q '<?xml'; then
+    fail "$f doesn't start with <?xml (wrapped in a layout?)"
+  fi
+done
+
+if [ "$status" -eq 0 ]; then
+  echo "check-classic: OK — $checked Desk pages, each with a Classic copy; sitemap clean"
+fi
+exit "$status"

@@ -15,6 +15,8 @@ The window metaphor, the menu bar, and the structure of the layouts are adapted 
 
 Before the desk, this site wore a minimal theme adapted from [muan.co](https://muan.co) by muan ([source](https://github.com/muan/site)), also MIT licensed. Plenty of what holds this one up — the notes collection, the feeds, the page structure — still comes from there.
 
+That theme never went away. Every page here also exists, exactly as it looked before the desk, under [/classic/](/classic/) — pick Classic under Theme in the control panel and the site remembers it; the ✦ in Classic's corner brings you back.
+
 ## Type
 
 Everything is set in [IBM Plex Mono](https://github.com/IBM/plex), with IBM Plex Sans kept for italics. Both are served from this domain rather than from Google Fonts — it keeps two third-party connections off the critical path, and means no font request for this page leaves badhrinadh.com. Two weights of the mono carry the whole interface, which is four small subsetted files in total.
@@ -31,4 +33,4 @@ An accent is stored as a hue, not as a colour. Lightness comes from whichever pa
 
 Almost none, and nothing you need. The script adds dragging to the window title bars, the clock in the menu bar, and the control panel. The printer form needs it, because the printer is on the other end of an API. Everything else — every page, post, note, listing, and the navigation — is HTML and CSS. With scripting off you get a static desk, which is still a readable site.
 
-The one script this site does not serve itself is the like button on posts and notes, which loads a custom element from a CDN. It is off unless `open_heart_endpoint` is set in the config, and it is unset.
+All of it is served from this domain. The site loads no third-party scripts at all.

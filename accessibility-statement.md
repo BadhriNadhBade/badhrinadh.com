@@ -23,6 +23,7 @@ This section is honest rather than aspirational.
 
 - **The windows can only be dragged with a pointer.** Dragging is decoration — nothing is hidden behind it, and windows are fully readable where they start — but there is no keyboard equivalent.
 - **The three retro palettes are not held to the AA promise above.** They are a joke about old computers; the Auto, Light, and Dark palettes are the audited ones, and they are what you get unless you deliberately pick otherwise.
+- **The Classic theme is kept exactly as it was.** Pages under `/classic/` are the site's earlier look, preserved unchanged, so this statement's promises are made for the desk; Classic carries its own accessibility statement from before. The ✦ in its corner returns you here.
 - **The message printer needs JavaScript.** It posts to an API, so there is no no-JS fallback; without scripting you get a line of text explaining that instead of the form.
 - **The clock in the menu bar needs JavaScript.** Without it, it reads `--:--` rather than claiming a time it doesn't know.
 - **The character counter on the printer form is not announced while you type.** It used to update a live region on every keystroke, which meant screen readers read "1 / 500", "2 / 500" and so on continuously. It is now described-by the message field, so it is read once when you focus it. The 500-character limit is enforced by the field itself either way.

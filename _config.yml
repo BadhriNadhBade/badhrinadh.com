@@ -26,9 +26,11 @@ defaults:
       type: notes
     values:
       layout: note
+  # Scoped by path, not `type: pages`: in Jekyll 3 that type also matches every
+  # root-level Page, which would wrap assets/desk.js (a Page, because of its
+  # front matter) and the feeds in the full HTML window layout.
   - scope:
-      path: ""
-      type: pages
+      path: "_pages"
     values:
       layout: page
 # Ships with the github-pages gem but is off by default, so it has to be named
@@ -46,9 +48,13 @@ i18n:
     source: View source
     colophon: Colophon
     now: Now
-# OpenHeart endpoint for the like button. Until you point this at your own
-# instance (https://github.com/dddddddddzzzz/OpenHeart), the button renders
-# but records nothing.
+# Read only by the Classic layout (_layouts/default.html), which is restored
+# verbatim from the old theme and rebuilt under /classic/ by
+# _plugins/classic.rb. That layout shows its OpenHeart like button whenever
+# this is anything other than "" — and Liquid's `!= ""` is true for nil too,
+# so deleting the key would switch the button ON, pointing at nothing. It has
+# to stay here, set to exactly "", for Classic's like button to stay off.
+# Desk doesn't read it.
 open_heart_endpoint: ""
 
 markdown: CommonMarkGhPages
@@ -61,3 +67,5 @@ exclude:
   - Gemfile
   - Gemfile.lock
   - vendor
+  # Build-time checks run by .github/workflows/pages.yml, not part of the site.
+  - script

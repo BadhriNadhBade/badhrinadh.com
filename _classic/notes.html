@@ -1,0 +1,22 @@
+---
+title: Notes
+layout: default
+type: static
+header_content: Short thoughts, links, and quotes. Newest first.
+---
+
+<a href="/notes.xml" class="styled-link">RSS</a>
+
+<ul class="notes">
+{% assign notes = site.notes | reverse %}
+{% for note in notes %}
+  <li class="note" id="N{{ note.date | date: '%Y%m%d%H%M' }}">
+    <time class="general-actions monospace" datetime="{{ note.date | date_to_xmlschema }}">
+      <a href="{{ note.url }}" class="hidden-link">{{ note.date | date: "%Y/%m/%d %H:%M" }}</a>
+      {% if note.location %}<span>{{ note.location }}</span>{% endif %}
+    </time>
+    <div class="note-content" lang="{{ note.lang | default: 'en-US' }}">{{ note.content | markdownify }}</div>
+    <div class="note-tags">{% for tag in note.tags %}<span class="note-tag" data-tag="{{ tag }}">{{ tag }}</span>{% endfor %}</div>
+  </li>
+{% endfor %}
+</ul>

@@ -1,0 +1,64 @@
+# ============================================================
+# desk.yml — the desk theme's settings, in one place.
+#
+# Read by the inline script in _includes/head.html (which applies a stored
+# choice before the first paint) and by assets/desk.js (which builds the
+# control panel and validates what it reads back from localStorage). Both
+# used to carry their own hand-copied lists, and the day they disagreed a
+# stored value would be accepted by one and thrown away by the other.
+#
+# Each `id` (bar the shells, which say why below) has to match a selector in
+# assets/desk.scss — :root[data-theme=…], [data-accent=…] or [data-wall=…] —
+# so adding one here without adding its CSS gets you a button that does
+# nothing. `label` is what the control panel shows.
+#
+# Quote "off". Jekyll's YAML parser follows YAML 1.1, where a bare off (like
+# on, yes and no) is the boolean false, not the string.
+# ============================================================
+
+# The whole-site theme, not a palette: Desk is this one, Classic is the
+# plainer site from before it, built as a copy of every page under /classic/.
+# There's no CSS selector behind these ids — choosing Classic leaves the page
+# for its /classic/ twin, and the head script sends you back there on later
+# visits. Only the panel and Classic's own corner ✦ change it. Unlike the
+# rest, there's nothing for desk.scss to draw: a second shell here also needs
+# a second build, which is the plugin's job, not a stylesheet's.
+shells:
+  - { id: desk,    label: Desk }
+  - { id: classic, label: Classic }
+
+appearances:
+  - { id: auto,  label: Auto }
+  - { id: light, label: Light }
+  - { id: dark,  label: Dark }
+
+# Retro palettes pin their own colours and are deliberately not persisted, so
+# the head script never sees this list — only desk.js does.
+retros:
+  - { id: "off", label: "Off" }
+  - { id: cga,   label: CGA }
+  - { id: dos,   label: DOS }
+  - { id: term,  label: Term }
+
+# The swatch colours themselves stay in desk.js next to the buttons: they are
+# oklch values that track the hue/chroma pairs in desk.scss, and a third copy
+# here would only be one more place to forget.
+accents:
+  - { id: green,   label: Green }
+  - { id: pink,    label: Pink }
+  - { id: blue,    label: Blue }
+  - { id: gold,    label: Gold }
+  - { id: rainbow, label: Rainbow }
+
+walls:
+  - { id: dots,  label: Dots }
+  - { id: grid,  label: Grid }
+  - { id: plain, label: Plain }
+
+# What a first visit (or cleared storage) gets.
+defaults:
+  shell: desk
+  appearance: auto
+  retro: "off"
+  accent: green
+  wall: dots

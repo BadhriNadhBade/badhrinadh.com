@@ -1,0 +1,95 @@
+name: "Build and deploy site"
+
+# The site is built here, not by GitHub Pages' own builder, because the
+# Classic theme at /classic/ is made by a custom plugin (_plugins/classic.rb)
+# and Pages' builder runs in safe mode, which ignores _plugins. Repository
+# settings → Pages → Source has to be "GitHub Actions" for the deploy job.
+#
+# Every push and pull request builds and checks the site; only main deploys.
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+  # "Add a note" and "Fetch and save robots.txt" commit to main with
+  # GITHUB_TOKEN, and pushes made with GITHUB_TOKEN deliberately don't
+  # trigger other workflows — so without this, a new note would sit unbuilt
+  # until the next human push. workflow_run fires when either finishes.
+  workflow_run:
+    workflows: ["Add a note", "Fetch and save robots.txt"]
+    types: [completed]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    # A failed or cancelled note/robots run pushed nothing worth building.
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      # configure-pages only reads the Pages settings.
+      pages: read
+    steps:
+      # workflow_run runs in the context of the default branch but would check
+      # out the commit that triggered the *other* workflow — from before the
+      # bot's push. Asking for main by name picks up the new note.
+      - uses: actions/checkout@v5
+        with:
+          ref: ${{ github.event_name == 'workflow_run' && 'main' || '' }}
+
+      # Gemfile.lock is gitignored, so there's no lockfile in the checkout;
+      # setup-ruby resolves one (bundle lock) before installing and keys the
+      # cache on it. The github-pages gem pins every version that matters, so
+      # the resolution is stable from run to run.
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.3'
+          bundler-cache: true
+
+      - id: pages
+        uses: actions/configure-pages@v5
+
+      - name: Build
+        run: bundle exec jekyll build
+        env:
+          JEKYLL_ENV: production
+
+      # Fails if any Desk page lacks its /classic/ twin, if the Classic
+      # post-render hook didn't run, or if Classic leaked into the sitemap.
+      - name: Check Classic copies
+        run: bash script/check-classic _site
+
+      - uses: actions/upload-pages-artifact@v4
+        with:
+          path: _site
+
+  deploy:
+    needs: build
+    # Only main goes live: a push to main, a manual run on main, or a
+    # workflow_run (which always runs on the default branch). Pull requests
+    # and other branches stop after the build and check.
+    if: >-
+      github.ref == 'refs/heads/main' &&
+      (github.event_name == 'push' ||
+       github.event_name == 'workflow_dispatch' ||
+       github.event_name == 'workflow_run')
+    runs-on: ubuntu-latest
+    # Deploys run one at a time and are never cancelled midway, so a note
+    # landing during a deploy queues behind it rather than tearing it down.
+    # This sits on the deploy job, not the whole workflow, so builds of other
+    # branches and pull requests never wait in (or bump things out of) the
+    # Pages queue.
+    concurrency:
+      group: pages
+      cancel-in-progress: false
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

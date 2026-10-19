@@ -17,13 +17,11 @@ layout: body
     </header>
 
     {% if page.image %}
-      <img src="/images/{{ page.image }}" alt="{{ page.image_alt }}" class="post-banner">
+      <img src="/assets/images/{{ page.image }}" alt="{{ page.image_alt }}" class="post-banner">
     {% endif %}
 
     <section class="content">
       {{ content }}
-
-      {% include open-heart.html %}
 
       {% comment %}
         site.posts is newest-first, so `next` is the newer post. Labelled by
