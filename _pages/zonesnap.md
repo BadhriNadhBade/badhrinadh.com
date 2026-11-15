@@ -16,7 +16,7 @@ Snap windows into place with a keyboard shortcut or by dragging to a screen edge
 - **Vertical screens** get their own zones: top, middle and bottom.
 - **One small menu** in the menu bar. No Dock icon, no account, no network.
 
-Works on macOS 12 (Monterey) and later. Free and open source (MIT).
+Built for macOS 12 (Monterey) and later, and tested on macOS 12. Tried it on a newer macOS? [Let me know](https://github.com/BadhriNadhBade/ZoneSnap/issues). Free and open source (MIT).
 
 ## Install
 
